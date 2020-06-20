@@ -1,10 +1,10 @@
 package com.example.mediaplayer.Data.Frame.JFrame;
 
 public class FrameComponent {
-long ComponentID;
-long HeightFactor;
-long WidthFactor;
-long QuantizationTableID;
+    long ComponentID;
+    long HeightFactor;
+    long WidthFactor;
+    long QuantizationTableID;
 
     public long getComponentID() {
         return ComponentID;

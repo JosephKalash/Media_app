@@ -6,25 +6,26 @@ public class PlayList {
     String Name;
     List<Container> Containers;
 
-    PlayList(String Name)
+    public PlayList(String Name,List<Container> containers)
     {
         this.Name=Name;
+        Containers = containers;
     }
     public void AddContainer(Container Container )
     {
         Containers.add(Container);
     }
-    void EditName(String Name)
+    public void EditName(String Name)
     {
         this.Name=Name;
     }
-    void RemoveContainer(Container Container)
+    public void RemoveContainer(Container Container)
     {
         Containers.remove(Container);
     }
 
-    void getContainer(int Containerindex)
+    public Container getContainer(int Containerindex)
     {
-
+       return Containers.get(Containerindex);
     }
 }
