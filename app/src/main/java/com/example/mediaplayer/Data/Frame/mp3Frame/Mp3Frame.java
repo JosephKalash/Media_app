@@ -1,4 +1,8 @@
-public class Mp3Frame{
+package com.example.mediaplayer.Data.Frame.mp3Frame;
+
+import com.example.mediaplayer.Data.Frame.Frame;
+
+public class Mp3Frame extends Frame {
     private Mp3FrameHeader mp3Header;
     private Mp3FrameSideInfo mp3SideInfo;
     private Mp3Granule[] mainData;

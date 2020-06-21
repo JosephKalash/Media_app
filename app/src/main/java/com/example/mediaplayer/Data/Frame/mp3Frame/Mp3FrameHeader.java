@@ -1,3 +1,5 @@
+package com.example.mediaplayer.Data.Frame.mp3Frame;
+
 public class Mp3FrameHeader {
     private int ID;
     private int layer;

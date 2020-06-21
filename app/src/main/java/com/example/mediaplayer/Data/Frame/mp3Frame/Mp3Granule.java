@@ -1,3 +1,5 @@
+package com.example.mediaplayer.Data.Frame.mp3Frame;
+
 public class Mp3Granule {
     private double[] region0;
     private double[] region1;

@@ -1,3 +1,5 @@
+package com.example.mediaplayer.Data.Frame.mp3Frame;
+
 public enum Frequancy {
     f_8kHz,
     f_12kHz,

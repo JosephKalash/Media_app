@@ -1,3 +1,5 @@
+package com.example.mediaplayer.Data.Frame.mp3Frame;
+
 public class SideInfoGr {
     private int part2_3length;
     private int bigValue;
