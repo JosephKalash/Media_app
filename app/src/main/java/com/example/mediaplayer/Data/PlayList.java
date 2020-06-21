@@ -8,10 +8,8 @@ public class PlayList {
     String Name;
     List<Container> Containers;
 
-    public PlayList(String Name,List<Container> containers)
-    {
+    public PlayList(String Name) {
         this.Name=Name;
-        Containers = containers;
     }
     public void AddContainer(Container Container )
     {
