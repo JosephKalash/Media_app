@@ -4,6 +4,8 @@ import com.example.mediaplayer.ContainerManager.Decoder.Decoder;
 import com.example.mediaplayer.ContainerManager.Parser.Parser;
 import com.example.mediaplayer.Data.Container.Container;
 
+import java.io.File;
+
 public class ContainerManager {
     Container container;
     Parser parser;
@@ -15,6 +17,10 @@ public class ContainerManager {
     public Container getContainer(){
         return container;
     }
+    public File getCurrentRawFile() {
+        return null;
+    }
+
     public void Decode(){ }
     public void Parse(){}
     public void StartManaging(){}
