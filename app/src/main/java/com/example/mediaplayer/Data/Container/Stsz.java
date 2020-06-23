@@ -1,4 +1,4 @@
-package com.example.mediaplayer.ContainerManager.Parser.mp4parser;
+package com.example.mediaplayer.Data.Container;
 
 import java.util.List;
 
