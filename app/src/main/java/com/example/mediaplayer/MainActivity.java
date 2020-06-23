@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.mediaplayer.ContainerManager.ContainerManager;
+import com.example.mediaplayer.ContainerManager.Parser.MB4Parser;
 import com.example.mediaplayer.Data.Data;
 
 import java.util.List;
@@ -18,5 +19,7 @@ List<String> Format;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MB4Parser parser = new MB4Parser(null);
+
     }
 }

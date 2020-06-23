@@ -7,7 +7,7 @@ public class Stsc {
     private List<Integer> mFirstChunk;
     private List<Integer> mSamplesPerChunk;
 
-    Stsc(int entriesCount, List<Integer> firstChunk, List<Integer> samplesPerChuk) {
+    public Stsc(int entriesCount, List<Integer> firstChunk, List<Integer> samplesPerChuk) {
         mEntriesCount = entriesCount;
         mFirstChunk = firstChunk;
         mSamplesPerChunk = samplesPerChuk;
