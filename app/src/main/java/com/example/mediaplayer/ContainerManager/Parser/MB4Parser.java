@@ -31,15 +31,12 @@ public class MB4Parser extends Parser {
     public MB4Parser(Container container) {
         super(container);
 
-        File file = new File("./plapla");
-        int size = (int) file.length();
-        byte[] bytes = new byte[size];
         try {
-            FileOutputStream out = new FileOutputStream(file);
-            out.write(1);
+            int size = in.available();
+            mAllBytes = new byte[size];
 
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
-            buf.read(bytes, 0, bytes.length);
+            BufferedInputStream buf = new BufferedInputStream(in);
+            buf.read(mAllBytes, 0, mAllBytes.length);
             buf.close();
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
@@ -49,15 +46,14 @@ public class MB4Parser extends Parser {
             e.printStackTrace();
         }
 
-        TrakBuilder builder = new TrakBuilder();
-        Trak trak1 = builder.buildTraks(0);
-        Trak trak2 = builder.buildTraks(1);
 
     }
 
     @Override
     public void Parse() {
-
+        TrakBuilder builder = new TrakBuilder();
+        Trak trak1 = builder.buildTraks(0);
+        Trak trak2 = builder.buildTraks(1);
     }
 
     private class TrakBuilder {
@@ -338,16 +334,9 @@ public class MB4Parser extends Parser {
                             e.printStackTrace();
                         }
                     }
-                    FileOutputStream fout = null;
-                    try {
-                        fout = new FileOutputStream(new File("./fucker.mp4"));
-                        fout.write(frames.toByteArray());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
 
-                    }
                     return frames.toByteArray();
+
                     // getting audio stream
                 } else if (id == 1){
                     for (int i = 0; i < stsc.getmEntriesCount() - 1; i ++) {
@@ -389,23 +378,11 @@ public class MB4Parser extends Parser {
                             chunkNumber++;
                             sampleNumber += stsc.getmSamplesPerChunk(i + 1);
                             FileOutputStream fout = null;
-                            try {
-                                fout = new FileOutputStream(new File("./fucker.mp3"));
-                                fout.write(frames.toByteArray());
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-
-                            }
-
                             return frames.toByteArray();
-
                         }
                     }
-
                 }
                 return null;
-
             }
 
         }
