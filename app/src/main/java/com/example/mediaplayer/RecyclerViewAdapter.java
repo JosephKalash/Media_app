@@ -13,11 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.List;
 
+// TODO: edited the constructor type from List<File> to List<String>
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<File> mediaFiles;
-    RecyclerViewAdapter(List<File> mediaFiles , Context mContext){
+    private List<String> mediaFiles;
+    RecyclerViewAdapter(List<String> mediaFiles , Context mContext){
         this.mContext = mContext;
         this.mediaFiles = mediaFiles;
     }
@@ -31,7 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((FileLayoutHolder)holder).videoTitle.setText(mediaFiles.get(position).getName());
+        ((FileLayoutHolder)holder).videoTitle.setText(mediaFiles.get(position));
 
     }
 
