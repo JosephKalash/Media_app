@@ -25,11 +25,11 @@ public class StorageFilesReader {
             path = file.getParent().replace("/Android/data/", "")
                     .replace(context.getPackageName(), "");
             storageDir = new File(path);
-            load_Directory_Files(storageDir);
+            loadDirectoryFiles(storageDir);
         }
 
     }
-    private void load_Directory_Files(File directory){
+    private void loadDirectoryFiles(File directory){
         File[] filesList = directory.listFiles();
         String name;
 
@@ -37,7 +37,7 @@ public class StorageFilesReader {
             for (int i=0; i<filesList.length; i++){
 
                 if(filesList[i].isDirectory())
-                    load_Directory_Files(filesList[i]);
+                    loadDirectoryFiles(filesList[i]);
 
                 else { //it's a file
                     name = filesList[i].getName().toLowerCase();

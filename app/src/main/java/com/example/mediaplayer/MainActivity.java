@@ -24,9 +24,10 @@ import com.example.mediaplayer.Data.Data;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-Data data;
-ContainerManager containerManager;
-List<String> Format;
+
+    Data data;
+    ContainerManager containerManager;
+    List<String> Format;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private StorageFilesReader stReader;
