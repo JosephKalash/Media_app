@@ -4,9 +4,8 @@ import com.example.mediaplayer.Data.Container.Container;
 
 import java.io.File;
 
-abstract public class Parser {
+public abstract class Parser {
 
-    Container container;
 
     protected Container mContainer;
 
@@ -14,13 +13,10 @@ abstract public class Parser {
         this.mContainer = container;
     }
 
-    abstract public void Parse();
+    abstract public void parse();
 
     public Container getContainer(){
         return mContainer;
     }
 
-    protected File getRawFile (){
-        return null;
-    }
 }

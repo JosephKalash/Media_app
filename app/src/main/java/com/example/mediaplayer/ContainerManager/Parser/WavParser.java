@@ -8,7 +8,7 @@ public class WavParser extends Parser {
     }
 
     @Override
-    public void Parse() {
+    public void parse() {
 
     }
 }

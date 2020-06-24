@@ -3,15 +3,14 @@ package com.example.mediaplayer.ContainerManager.Parser;
 
 
 import com.example.mediaplayer.Data.Container.Container;
-import com.example.mediaplayer.Data.Container.Stco;
-import com.example.mediaplayer.Data.Container.Stsc;
-import com.example.mediaplayer.Data.Container.Stsz;
-import com.example.mediaplayer.Data.Container.Trak;
-import com.example.mediaplayer.Data.Container.TrakFormat;
+import com.example.mediaplayer.Data.Container.mp4.Stco;
+import com.example.mediaplayer.Data.Container.mp4.Stsc;
+import com.example.mediaplayer.Data.Container.mp4.Stsz;
+import com.example.mediaplayer.Data.Container.mp4.Trak;
+import com.example.mediaplayer.Data.Container.mp4.TrakFormat;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,10 +23,13 @@ public class MB4Parser extends Parser {
 
     private byte[] mAllBytes;
     private FileInputStream in;
+    private ArrayList<Trak> mTraks;
 
 
     public MB4Parser(Container container) {
         super(container);
+
+        mTraks = new ArrayList<>();
 
         try {
             int size = in.available();
@@ -37,10 +39,8 @@ public class MB4Parser extends Parser {
             buf.read(mAllBytes, 0, mAllBytes.length);
             buf.close();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -48,10 +48,17 @@ public class MB4Parser extends Parser {
     }
 
     @Override
-    public void Parse() {
+    public void parse() {
         TrakBuilder builder = new TrakBuilder();
-        Trak trak1 = builder.buildTraks(0);
-        Trak trak2 = builder.buildTraks(1);
+        Trak trak1 = builder.buildTrak(0);
+        Trak trak2 = builder.buildTrak(1);
+
+        mTraks.add(trak1);
+        mTraks.add(trak2);
+    }
+
+    public ArrayList<Trak> getTraks() {
+        return mTraks;
     }
 
     private class TrakBuilder {
@@ -70,7 +77,7 @@ public class MB4Parser extends Parser {
             mCurrentPosition = 0;
         }
 
-        private Trak buildTraks(int trakNumber) {
+        private Trak buildTrak(int trakNumber) {
             Stco stco;
             Stsz stsz;
             Stsc stsc;

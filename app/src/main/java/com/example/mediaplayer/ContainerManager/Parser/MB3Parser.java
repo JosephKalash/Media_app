@@ -8,7 +8,8 @@ public class MB3Parser extends Parser {
     }
 
     @Override
-    public void Parse() {
+    public void parse() {
 
     }
+
 }

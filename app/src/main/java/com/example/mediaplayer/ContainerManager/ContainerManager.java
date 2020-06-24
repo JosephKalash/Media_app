@@ -17,9 +17,6 @@ public class ContainerManager {
     public Container getContainer(){
         return container;
     }
-    public File getCurrentRawFile() {
-        return null;
-    }
 
     public void Decode(){ }
     public void Parse(){}
