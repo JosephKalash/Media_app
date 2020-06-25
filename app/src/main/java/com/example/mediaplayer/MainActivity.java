@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.example.mediaplayer.ContainerManager.Decoder.Mjpeg.MjpegDecoder;
+import com.example.mediaplayer.MediaControl.VideoRender;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.core.app.ActivityCompat;
@@ -39,9 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
+
 
         stReader = new StorageFilesReader();
         checkStorageAccessPermission();

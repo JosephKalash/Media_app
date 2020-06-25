@@ -35,7 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((FileLayoutHolder)holder).videoTitle.setText(mediaFiles.get(position).toString());
+        ((FileLayoutHolder)holder).videoTitle.setText(mediaFiles.get(position).getName());
         ((FileLayoutHolder)holder).thumbnail.setImageResource(mImageResourceId);
     }
 

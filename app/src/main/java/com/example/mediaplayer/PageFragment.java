@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.example.mediaplayer.MainActivity.stReader;
+
 
 public class PageFragment extends Fragment {
     private static final String FRAGMENT_INDEX = "index";
@@ -44,17 +46,19 @@ public class PageFragment extends Fragment {
         assert getArguments() != null;
         int pageNumber = getArguments().getInt(FRAGMENT_INDEX);
         if (pageNumber == 0) {
-            mModelData = MainActivity.stReader.getAudioFies();
+
+            mModelData = stReader.getAudioFies();
             mRecyclerViewAdapter = new RecyclerViewAdapter(mModelData, getActivity(),
                     R.drawable.ic_music);
         }
         if (pageNumber == 1) {
-            mModelData = MainActivity.stReader.getVideoFies();
+
+            mModelData = stReader.getVideoFies();
             mRecyclerViewAdapter = new RecyclerViewAdapter(mModelData, getActivity(),
                     R.drawable.ic_video);
         }
         else {
-            mModelData = MainActivity.stReader.getAudioFies();
+            mModelData = stReader.getAudioFies();
         }
 
         mRecyclerView = view.findViewById(R.id.recyclerView);
