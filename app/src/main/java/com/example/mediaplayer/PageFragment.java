@@ -11,15 +11,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
 public class PageFragment extends Fragment {
     private static final String FRAGMENT_INDEX = "index";
 
-    private RecyclerView recyclerView;
-    private RecyclerViewAdapter recyclerViewAdapter;
-    private ArrayList<String> dummyData;
+    private RecyclerView mRecyclerView;
+    private RecyclerViewAdapter mRecyclerViewAdapter;
+    private ArrayList<File> mModelData;
 
     public static PageFragment newInstance(int index) {
         PageFragment fragment = new PageFragment();
@@ -34,32 +35,40 @@ public class PageFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        // TODO: dummy data here, watinig to be removed and replaced with model layer
-        dummyData = new ArrayList<>();
-        for (int i = 0; i < 100; i ++) {
-            dummyData.add("HOLA" + i + 1);
-        }
         return inflater.inflate(R.layout.fragment_page_view, container, false);
+
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-        if (getArguments() != null) {
-            int pageNumber = (int) getArguments().getSerializable(FRAGMENT_INDEX);
+        assert getArguments() != null;
+        int pageNumber = getArguments().getInt(FRAGMENT_INDEX);
+        if (pageNumber == 0) {
+            mModelData = MainActivity.stReader.getAudioFies();
+            mRecyclerViewAdapter = new RecyclerViewAdapter(mModelData, getActivity(),
+                    R.drawable.ic_music);
+        }
+        if (pageNumber == 1) {
+            mModelData = MainActivity.stReader.getVideoFies();
+            mRecyclerViewAdapter = new RecyclerViewAdapter(mModelData, getActivity(),
+                    R.drawable.ic_video);
+        }
+        else {
+            mModelData = MainActivity.stReader.getAudioFies();
         }
 
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView = view.findViewById(R.id.recyclerView);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //to avoid lack in scrolling
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemViewCacheSize(20);
-        recyclerView.setDrawingCacheEnabled(true);
-        recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        recyclerView.setNestedScrollingEnabled(false);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemViewCacheSize(20);
+        mRecyclerView.setDrawingCacheEnabled(true);
+        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        mRecyclerView.setNestedScrollingEnabled(false);
 
-        recyclerViewAdapter = new RecyclerViewAdapter(dummyData, getActivity());
-        recyclerView.setAdapter(recyclerViewAdapter);
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
     }
 
 }

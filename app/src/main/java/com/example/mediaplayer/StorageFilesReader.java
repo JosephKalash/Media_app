@@ -10,12 +10,12 @@ import java.util.List;
 import androidx.core.content.ContextCompat;
 
 public class StorageFilesReader {
-    public static final String[] MEDIA_EXTENSIONS = {".mp4",".mp3",".wav"};
-    public static final String[] AUDIO_EXTENSIONS = {".mp3",".wav"};
-    public static final String[] VIDEO_EXTENSIONS = {".mp4"};
+    private static final String[] MEDIA_EXTENSIONS = {".mp4",".mp3",".wav"};
+    private static final String[] AUDIO_EXTENSIONS = {".mp3",".wav"};
+    private static final String[] VIDEO_EXTENSIONS = {".mp4"};
 
-    List audio = Arrays.asList(AUDIO_EXTENSIONS);
-    List video = Arrays.asList(VIDEO_EXTENSIONS);
+    private List audio = Arrays.asList(AUDIO_EXTENSIONS);
+    private List video = Arrays.asList(VIDEO_EXTENSIONS);
 
     //all loaded files will be here
     private ArrayList<File> allMediaFiles = new ArrayList<>();
@@ -24,7 +24,7 @@ public class StorageFilesReader {
 
 
 
-    public void loadMediaFiles(Context context){
+    void loadMediaFiles(Context context){
         File storageDir;
         String path;
         File[] files;
@@ -39,7 +39,7 @@ public class StorageFilesReader {
         }
 
     }
-    private void loadDirectoryFiles(File directory){
+    void loadDirectoryFiles(File directory){
         File[] filesList = directory.listFiles();
         String name;
 
@@ -74,7 +74,4 @@ public class StorageFilesReader {
     public ArrayList<File> getAudioFies() { return audioFiles;}
     public ArrayList<File> getVideoFies() { return  videoFiles;}
 
-    public void setAllMediaFiles(ArrayList<File> allMediaFiles) {
-        this.allMediaFiles = allMediaFiles;
-    }
 }

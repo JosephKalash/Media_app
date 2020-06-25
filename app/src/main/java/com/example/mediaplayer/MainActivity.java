@@ -8,24 +8,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TableLayout;
-import android.widget.TextView;
 
 import com.example.mediaplayer.ContainerManager.ContainerManager;
 import com.example.mediaplayer.Data.Data;
@@ -33,13 +26,15 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
+
 public class MainActivity extends AppCompatActivity {
 
     Data data;
     ContainerManager containerManager;
     List<String> Format;
     ViewPager viewPager;
-    private StorageFilesReader stReader;
+    static StorageFilesReader stReader;
     private TabLayout mTabLayout;
     private boolean permission;
 
@@ -48,17 +43,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
 
+        stReader = new StorageFilesReader();
+        checkStorageAccessPermission();
+
         viewPager = findViewById(R.id.pager);
         mTabLayout = findViewById(R.id.tab_layout);
 
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager());
-
         viewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(viewPager);
-
-        stReader = new StorageFilesReader();
-        //checking permission
-        checkStorageAccessPermission();
 
     }
 
@@ -112,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public class PagerAdapter extends FragmentStatePagerAdapter {
+    public class PagerAdapter extends FragmentPagerAdapter {
         public PagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
