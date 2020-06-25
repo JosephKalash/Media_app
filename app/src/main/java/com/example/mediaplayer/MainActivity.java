@@ -10,21 +10,23 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-
 import com.example.mediaplayer.ContainerManager.ContainerManager;
 import com.example.mediaplayer.Data.Data;
-
-
+import java.io.File;
 import java.util.List;
 
 
@@ -36,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
     static StorageFilesReader stReader;
     private TabLayout mTabLayout;
     private boolean permission;
+
+    public static File getContainer(String name){
+        return stReader.getFileByName(name);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(viewPager);
 
-    }
+
+            }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

@@ -21,7 +21,6 @@ public class WavParser extends Parser {
         super(container);
         ParsingContainer = (WavContainer) container;
     }
-    /**ُ*Delete */
 
     @Override
     public void parse() throws IOException, WavFileException {

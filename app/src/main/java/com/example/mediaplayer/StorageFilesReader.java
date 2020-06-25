@@ -74,4 +74,11 @@ public class StorageFilesReader {
     public ArrayList<File> getAudioFies() { return audioFiles;}
     public ArrayList<File> getVideoFies() { return  videoFiles;}
 
+    public File getFileByName(String name){
+        for(File file : audioFiles){
+            return file;
+        }
+    return null;
+    }
+
 }

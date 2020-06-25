@@ -38,6 +38,9 @@ public class WavContainer extends Container  {
 
     }
 
+    public WavContainer() {
+    }
+
     public InputStream getIStream() {
         return IStream;
     }
