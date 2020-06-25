@@ -10,11 +10,11 @@ import com.example.mediaplayer.Data.Frame.JFrame.*;
 import java.io.File;
 import java.util.ArrayList;
 
-public class MjbegDecoder extends Decoder {
+public class MjpegDecoder extends Decoder {
     MjpegParser MjpegParser;
     File JpegFile;
     static ArrayList<JpegFrame> MjpegStream=new ArrayList<JpegFrame>();
-    public MjbegDecoder(Container container, File File) {
+    public MjpegDecoder(Container container, File File) {
         super(container);
         this.JpegFile=File;
         MjpegParser=new MjpegParser(this.JpegFile);
