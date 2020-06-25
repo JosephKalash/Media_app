@@ -32,13 +32,10 @@ public class StorageFilesReader {
         //load data here
 
         files = ContextCompat.getExternalFilesDirs(context.getApplicationContext(),null);
-        for (int i=0;i< files.length;i++)
-        {
-         /* path  = files[i].getParent().replace("/Android/data/","")
-                    .replace(context.getPackageName(),"");*/
-           path  = files[i].getParent();
+        for (File file : files) {
+            path = file.getParent().replace("/Android/data/", "")
+                    .replace(context.getPackageName(), "");
             storageDir = new File(path);
-
             loadDirectoryFiles(storageDir);
         }
 
@@ -76,4 +73,5 @@ public class StorageFilesReader {
     }
     public ArrayList<File> getAudioFies() { return audioFiles;}
     public ArrayList<File> getVideoFies() { return  videoFiles;}
+
 }
