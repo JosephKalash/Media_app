@@ -5,7 +5,7 @@ public class Mp3FrameHeader {
     private int layer;
     private int protBit;
     private int bitRate;
-    private Frequancy frequancy;
+    private int frequancy;
     private int padBit;
     private int privBit;
     private int mode;
@@ -14,34 +14,15 @@ public class Mp3FrameHeader {
     private int emphasis;
 
     public Mp3FrameHeader(){}
-    public Mp3FrameHeader( int ID, int layer, int protBit, int bitRate, Frequancy frequancy,
-                          int padBit, int privBit, int mode, int modeExtesion, int home, int emphasis) {
 
-        this.ID = ID;
-        this.layer = layer;
-        this.protBit = protBit;
-        this.bitRate = bitRate;
-        this.frequancy = frequancy;
-        this.padBit = padBit;
-        this.privBit = privBit;
-        this.mode = mode;
-        this.modeExtesion = modeExtesion;
-        this.home = home;
-        this.emphasis = emphasis;
+
+    public int getMode() {
+        return mode;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
 
     public int getID() {
         return ID;
@@ -75,11 +56,11 @@ public class Mp3FrameHeader {
         this.bitRate = bitRate;
     }
 
-    public Frequancy getFrequancy() {
+    public int getFrequancy() {
         return frequancy;
     }
 
-    public void setFrequancy(Frequancy frequancy) {
+    public void setFrequancy(int frequancy) {
         this.frequancy = frequancy;
     }
 
@@ -97,14 +78,6 @@ public class Mp3FrameHeader {
 
     public void setPrivBit(int privBit) {
         this.privBit = privBit;
-    }
-
-    public int getMode() {
-        return mode;
-    }
-
-    public void setMode(int mode) {
-        this.mode = mode;
     }
 
     public int getModeExtesion() {
