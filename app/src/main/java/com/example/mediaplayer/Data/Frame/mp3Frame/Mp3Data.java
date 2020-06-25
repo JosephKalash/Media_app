@@ -6,21 +6,21 @@ import java.io.InputStream;
 
 public class Mp3Data extends Frame {
 
-    Buffer buffer;
+    public Buffer buffer;
     private MainDataReader mainDataReader;
     private float[] store;
     private float[] vector;
     private int stereo =-1;
     private static byte[] samplesBuffer;
     private Mp3FrameHeader mp3Header;
-    Mp3FrameSideInfo mp3SideInfo;
+    public Mp3FrameSideInfo mp3SideInfo;
     private byte[] mainData;
 
     public Mp3Data(InputStream in) {
         buffer = new Buffer(in);
         this.mp3Header = new Mp3FrameHeader();
     }
-    static final class MainDataReader {
+   public static final class MainDataReader {
         public final byte[] mainData;
         public int top = 0;
         public int index = 0;
@@ -31,7 +31,7 @@ public class Mp3Data extends Frame {
         }
 
     }
-    static final class Buffer {
+    public static final class Buffer {
         public final InputStream in;
         public int current = 0;
         public int lastByte = -1;

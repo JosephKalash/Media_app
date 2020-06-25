@@ -3,22 +3,22 @@ package com.example.mediaplayer.Data.Frame.mp3Frame;
 public class Mp3FrameSideInfo {
     private int mainDataBegin;
     //side info data
-    int[] scfsi;
+    public int[] scfsi;
     //these data are for each granule
-    int[] part2_3_length;
-    int[] big_values;
-    int[] global_gain;
-    int[] scalefac_compress;
-    int[] win_switch_flag;
-    int[] block_type;
-    int[] mixed_block_flag;
-    int[] table_select;
-    int[] subblock_gain;
-    int[] region0_count;
-    int[] region1_count;
-    int[] preflag;
-    int[] scalefac_scale;
-    int[] count1table_select;
+    public int[] part2_3_length;
+    public int[] big_values;
+    public int[] global_gain;
+    public int[] scalefac_compress;
+    public int[] win_switch_flag;
+    public int[] block_type;
+    public int[] mixed_block_flag;
+    public int[] table_select;
+    public int[] subblock_gain;
+    public int[] region0_count;
+    public int[] region1_count;
+    public int[] preflag;
+    public int[] scalefac_scale;
+    public int[] count1table_select;
 
 
     public Mp3FrameSideInfo(int stereo) {
