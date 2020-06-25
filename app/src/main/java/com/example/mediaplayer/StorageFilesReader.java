@@ -4,33 +4,42 @@ import android.content.Context;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import androidx.core.content.ContextCompat;
 
 public class StorageFilesReader {
-    public static final String[] mediaExtensions = {".mp4","mp3",".wav"};
+    private static final String[] MEDIA_EXTENSIONS = {".mp4",".mp3",".wav"};
+    private static final String[] AUDIO_EXTENSIONS = {".mp3",".wav"};
+    private static final String[] VIDEO_EXTENSIONS = {".mp4"};
+
+    private List audio = Arrays.asList(AUDIO_EXTENSIONS);
+    private List video = Arrays.asList(VIDEO_EXTENSIONS);
 
     //all loaded files will be here
     private ArrayList<File> allMediaFiles = new ArrayList<>();
+    private ArrayList<File> audioFiles = new ArrayList<>();
+    private ArrayList<File> videoFiles = new ArrayList<>();
 
 
-    public void loadMediaFiles(Context context){
+
+    void loadMediaFiles(Context context){
         File storageDir;
         String path;
         File[] files;
         //load data here
 
         files = ContextCompat.getExternalFilesDirs(context.getApplicationContext(),null);
-        for (int i=0;i< files.length;i++)
-        {
-            path = files[i].getParent().replace("/Android/data/","")
-                    .replace(context.getPackageName(),"");
+        for (File file : files) {
+            path = file.getParent().replace("/Android/data/", "")
+                    .replace(context.getPackageName(), "");
             storageDir = new File(path);
-            load_Directory_Files(storageDir);
+            loadDirectoryFiles(storageDir);
         }
 
     }
-    private void load_Directory_Files(File directory){
+    void loadDirectoryFiles(File directory){
         File[] filesList = directory.listFiles();
         String name;
 
@@ -38,15 +47,21 @@ public class StorageFilesReader {
             for (int i=0; i<filesList.length; i++){
 
                 if(filesList[i].isDirectory())
-                    load_Directory_Files(filesList[i]);
+                    loadDirectoryFiles(filesList[i]);
 
-                else { //it's file
+                else { //it's a file
                     name = filesList[i].getName().toLowerCase();
-                    for (String extension: mediaExtensions)
+                    for (String extension: MEDIA_EXTENSIONS)
                         //check the type of file
                         if(name.endsWith(extension)){
                             allMediaFiles.add(filesList[i]);
                             //when we found file
+                            if (audio.contains(extension)) {
+                                audioFiles.add(filesList[i]);
+                            }
+                            if (video.contains(extension)) {
+                                videoFiles.add(filesList[i]);
+                            }
                             break;
                         }
                 }
@@ -56,8 +71,7 @@ public class StorageFilesReader {
     public ArrayList<File> getAllMediaFiles() {
         return allMediaFiles;
     }
+    public ArrayList<File> getAudioFies() { return audioFiles;}
+    public ArrayList<File> getVideoFies() { return  videoFiles;}
 
-    public void setAllMediaFiles(ArrayList<File> allMediaFiles) {
-        this.allMediaFiles = allMediaFiles;
-    }
 }
