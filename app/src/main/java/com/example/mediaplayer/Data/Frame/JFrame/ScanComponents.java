@@ -34,4 +34,12 @@ public class ScanComponents {
         this.DCHuffmanTable = DCHuffmanTable;
         this.ACHuffmanTable = ACHuffmanTable;
     }
+    public void print()
+    {
+
+        System.out.println("Component  ID: "+ComponentID);
+        System.out.println("Huffman DC ID: "+DCHuffmanTable);
+        System.out.println("Huffman AC ID: "+ACHuffmanTable);
+        System.out.println();
+    }
 }

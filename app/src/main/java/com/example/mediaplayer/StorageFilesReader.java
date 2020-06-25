@@ -1,6 +1,7 @@
 package com.example.mediaplayer;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.List;
 import androidx.core.content.ContextCompat;
 
 public class StorageFilesReader {
-    private static final String[] MEDIA_EXTENSIONS = {".mp4",".mp3",".wav"};
+    private static final String[] MEDIA_EXTENSIONS = {".mp4",".mp3",".wav", ".jpeg"};
     private static final String[] AUDIO_EXTENSIONS = {".mp3",".wav"};
     private static final String[] VIDEO_EXTENSIONS = {".mp4"};
 
@@ -31,10 +32,13 @@ public class StorageFilesReader {
         //load data here
 
         files = ContextCompat.getExternalFilesDirs(context.getApplicationContext(),null);
-        for (File file : files) {
-            path = file.getParent().replace("/Android/data/", "")
-                    .replace(context.getPackageName(), "");
+        for (int i=0;i< files.length;i++)
+        {
+         /* path  = files[i].getParent().replace("/Android/data/","")
+                    .replace(context.getPackageName(),"");*/
+           path  = files[i].getParent();
             storageDir = new File(path);
+
             loadDirectoryFiles(storageDir);
         }
 
@@ -42,7 +46,6 @@ public class StorageFilesReader {
     void loadDirectoryFiles(File directory){
         File[] filesList = directory.listFiles();
         String name;
-
         if(filesList != null && filesList.length > 0)
             for (int i=0; i<filesList.length; i++){
 
@@ -73,5 +76,4 @@ public class StorageFilesReader {
     }
     public ArrayList<File> getAudioFies() { return audioFiles;}
     public ArrayList<File> getVideoFies() { return  videoFiles;}
-
 }

@@ -1,5 +1,27 @@
 package com.example.mediaplayer.Data.Frame.JFrame;
+/**
+ <
+ * This class is Table inside The Jpeg File Used To
+ * Know The DCT Values .
 
+ * Every Value on @Values Matrix corresponding to value(pixel) from
+ * the MCU Channel
+
+ * We Can Define More Than one Table with Same Tag @DQT(FFDB)
+ But The @LQ Length will involve The Size of the Two Tables
+
+
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+ QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
+
+ >
+ */
 public class QuantizationTable {
     long   TableLength;
     long   TableKind;
@@ -32,7 +54,19 @@ public class QuantizationTable {
     }
 
     public void setValues(long[] values) {
-        Values = values;
+        this.Values = values;
     }
+    public void print ()
+    {
+        System.out.println("QuantizationTable : ");
+        System.out.println("Table Length : "+TableLength);
+        System.out.println("Table Kind : "+TableKind);
+        for (int i=1;i<=Values.length;i++){
+            System.out.print(Values[i-1]+" | ");
+            if(i!=0&&i%8==0)
+                System.out.println();
+        }
+        System.out.println();
 
+    }
 }

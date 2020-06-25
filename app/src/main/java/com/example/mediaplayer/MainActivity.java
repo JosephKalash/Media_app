@@ -3,15 +3,6 @@ package com.example.mediaplayer;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -20,14 +11,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.example.mediaplayer.ContainerManager.ContainerManager;
-import com.example.mediaplayer.ContainerManager.Parser.MB4Parser;
-import com.example.mediaplayer.Data.Data;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
+import com.example.mediaplayer.ContainerManager.ContainerManager;
+import com.example.mediaplayer.Data.Data;
+
 
 import java.util.List;
 
-import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class MainActivity extends AppCompatActivity {
     Data data;
@@ -40,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
 
@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         } else{//load files if permission was granted
             stReader.loadMediaFiles(this);}
     }
-
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -149,5 +148,3 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
-
-

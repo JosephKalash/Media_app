@@ -2,39 +2,49 @@ package com.example.mediaplayer.Data.Frame.JFrame;
 
 import com.example.mediaplayer.Data.Frame.Frame;
 
+import java.nio.Buffer;
+import java.util.ArrayList;
+
 public class JpegFrame extends Frame {
-    QuantizationTable[] QuantizationTables;
-    HuffmanTable[] HuffmanTables;
+    ArrayList<QuantizationTable> QuantizationTables;
+    ArrayList<HuffmanTable> HuffmanTables;
     ScanHeader ScanHeader;
     FrameHeader FrameHeader;
-    MCU [] MCUs;
+    ArrayList<MCU> MCUs;
+    ArrayList<Long>HuffamnData;
 
-    public JpegFrame(QuantizationTable[] quantizationTables, HuffmanTable[] huffmanTables, ScanHeader scanHeader,
-                     FrameHeader frameHeader, MCU[] MCUs) {
+
+    public JpegFrame(ArrayList<QuantizationTable> quantizationTables, ArrayList<HuffmanTable> huffmanTables,
+                     ScanHeader scanHeader,
+                     FrameHeader frameHeader, ArrayList<Long>HuffamnData) {
         QuantizationTables = quantizationTables;
         HuffmanTables = huffmanTables;
         ScanHeader = scanHeader;
         FrameHeader = frameHeader;
-        this.MCUs = MCUs;
+        this.HuffamnData = HuffamnData;
+        MCUs=new ArrayList<>();
+        for(MCU Mcu:MCUs)
+            Mcu=new MCU();
+
     }
 
-    public QuantizationTable[] getQuantizationTables() {
+    public ArrayList<QuantizationTable> getQuantizationTables() {
         return QuantizationTables;
     }
 
-    public void setQuantizationTables(QuantizationTable[] quantizationTables) {
+    public void setQuantizationTables(ArrayList<QuantizationTable> quantizationTables) {
         QuantizationTables = quantizationTables;
     }
 
-    public HuffmanTable[] getHuffmanTables() {
+    public ArrayList<HuffmanTable> getHuffmanTables() {
         return HuffmanTables;
     }
 
-    public void setHuffmanTables(HuffmanTable[] huffmanTables) {
+    public void setHuffmanTables(ArrayList<HuffmanTable> huffmanTables) {
         HuffmanTables = huffmanTables;
     }
 
-    public com.example.mediaplayer.Data.Frame.JFrame.ScanHeader getScanHeader() {
+    public ScanHeader getScanHeader() {
         return ScanHeader;
     }
 
@@ -42,7 +52,7 @@ public class JpegFrame extends Frame {
         ScanHeader = scanHeader;
     }
 
-    public com.example.mediaplayer.Data.Frame.JFrame.FrameHeader getFrameHeader() {
+    public FrameHeader getFrameHeader() {
         return FrameHeader;
     }
 
@@ -50,11 +60,41 @@ public class JpegFrame extends Frame {
         FrameHeader = frameHeader;
     }
 
-    public MCU[] getMCUs() {
+    public ArrayList<MCU> getMCUs() {
         return MCUs;
     }
 
-    public void setMCUs(MCU[] MCUs) {
+    public void setMCUs(ArrayList<MCU> MCUs) {
         this.MCUs = MCUs;
     }
+    public QuantizationTable getQuantizationTables(int i) {
+        return QuantizationTables.get(i);
+    }
+    public ArrayList<Long> getHuffamnData() {
+        return HuffamnData;
+    }
+
+    public void setHuffamnData(ArrayList<Long> HuffamnData) {
+        this.HuffamnData = HuffamnData;
+    }
+
+
+    public HuffmanTable getHuffmanTable(int TableKind,int TableID) {
+        if(TableID==2)TableID--;
+        for(int i=0;i<HuffmanTables.size();i++)
+        {
+            if(HuffmanTables.get(i).getTableKind()==TableKind)
+                if(HuffmanTables.get(i).getTableID()==TableID)
+                    return HuffmanTables.get(i);
+        }
+        return null;
+    }
+    public void print(){
+        for(MCU Q: MCUs)
+        {
+            Q.print();
+        }
+    }
+
+
 }
