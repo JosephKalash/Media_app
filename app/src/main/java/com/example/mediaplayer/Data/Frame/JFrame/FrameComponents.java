@@ -1,6 +1,6 @@
 package com.example.mediaplayer.Data.Frame.JFrame;
 
-public class FrameComponent {
+public class FrameComponents {
     long ComponentID;
     long HeightFactor;
     long WidthFactor;
@@ -38,10 +38,21 @@ public class FrameComponent {
         QuantizationTableID = quantizationTableID;
     }
 
-    public FrameComponent(long componentID, long heightFactor, long widthFactor, long quantizationTableID) {
+    public FrameComponents(long componentID, long heightFactor, long widthFactor, long quantizationTableID) {
         ComponentID = componentID;
         HeightFactor = heightFactor;
         WidthFactor = widthFactor;
         QuantizationTableID = quantizationTableID;
+    }
+    public void print ()
+    {
+
+        System.out.println();
+        System.out.println("Channel Information:");
+        System.out.println("Channel ID: "+ComponentID);
+        System.out.println("Horizontal Sampling factor: "+HeightFactor);
+        System.out.println("Vertical Sampling factor: "+WidthFactor);
+        System.out.println("QuantizationTable Table ID: "+QuantizationTableID);
+
     }
 }

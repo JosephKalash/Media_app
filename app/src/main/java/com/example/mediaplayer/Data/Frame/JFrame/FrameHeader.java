@@ -6,7 +6,7 @@ public class FrameHeader {
     long FrameHeight;
     long FrameWidth;
     long NumberOfComponents;
-    FrameComponent[]FrameComponents;
+    com.example.mediaplayer.Data.Frame.JFrame.FrameComponents[]FrameComponents;
 
     public long getFrameHeaderLength() {
         return FrameHeaderLength;
@@ -48,16 +48,16 @@ public class FrameHeader {
         NumberOfComponents = numberOfComponents;
     }
 
-    public FrameComponent[] getFrameComponents() {
+    public com.example.mediaplayer.Data.Frame.JFrame.FrameComponents[] getFrameComponents() {
         return FrameComponents;
     }
 
-    public void setFrameComponents(FrameComponent[] frameComponents) {
+    public void setFrameComponents(com.example.mediaplayer.Data.Frame.JFrame.FrameComponents[] frameComponents) {
         FrameComponents = frameComponents;
     }
 
     public FrameHeader(long frameHeaderLength, long level, long frameHeight, long frameWidth,
-                       long numberOfComponents, FrameComponent[] frameComponents) {
+                       long numberOfComponents, com.example.mediaplayer.Data.Frame.JFrame.FrameComponents[] frameComponents) {
         FrameHeaderLength = frameHeaderLength;
         Level = level;
         FrameHeight = frameHeight;
@@ -65,4 +65,22 @@ public class FrameHeader {
         NumberOfComponents = numberOfComponents;
         FrameComponents = frameComponents;
     }
+    public void print ()
+    {
+        System.out.println();
+        System.out.println("Frame Header Information:");
+        System.out.println("Precision: "+Level);
+        System.out.println("Height: "+FrameHeight);
+        System.out.println("Width: "+FrameWidth);
+        System.out.println("Number Of Channels: "+NumberOfComponents);
+        System.out.println();
+        System.out.print("Frame Components Information:");
+
+        for(int i=0;i<NumberOfComponents;i++)
+            FrameComponents[i].print();
+        System.out.println("End of Frame Components Information:");
+
+        System.out.println("End of Frame Header Information:");
+    }
+
 }

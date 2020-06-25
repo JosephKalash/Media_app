@@ -34,4 +34,28 @@ ScanComponents[] ScanComponents;
     public void setScanComponents(ScanComponents[] scanComponents) {
         ScanComponents = scanComponents;
     }
+
+    public void print ()
+    {
+        System.out.println();
+        System.out.println("Scan Header Information:");
+        System.out.println("ScanHeader  Length:   "+ScanHeaderLength);
+        System.out.println("Number of components: "+NumberOfComponents);
+        System.out.println("Scan Components: ");
+
+        for(int i=0;i<NumberOfComponents;i++)
+            ScanComponents[i].print();
+        System.out.println("End of Scan Components: ");
+        /*
+        System.out.println("start of selection  : "+SS);
+        System.out.println("End of selection  : "+SE);
+        System.out.println("AH  : "+AH);
+        System.out.println("AI  : "+AI);
+        */
+        System.out.println();
+        System.out.println("End OF Scan Header Information:");
+
+
+
+    }
 }
