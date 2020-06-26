@@ -20,7 +20,14 @@ public class WavContainer extends Container  {
     long ByteRate;
     InputStream IStream;
 
-    public WavContainer( InputStream iStream,long floatOffset, long floatScale, long byteRate,byte[] audioStream, long numberOfFrames, long numberOfChannels, long sampleRate, long blockAlign, long validBits, long compressionCode, long chunkID, long chunkSize, long bytePerSample) {
+    public WavContainer( InputStream iStream,
+                         long floatOffset, long floatScale,
+                         long byteRate,byte[] audioStream, long numberOfFrames,
+                         long numberOfChannels, long sampleRate, long blockAlign, long validBits,
+                         long compressionCode, long chunkID, long chunkSize,
+                         long bytePerSample) {
+
+        super(iStream);
         AudioStream = audioStream;
         NumberOfFrames = numberOfFrames;
         NumberOfChannels = numberOfChannels;
@@ -38,7 +45,8 @@ public class WavContainer extends Container  {
 
     }
 
-    public WavContainer() {
+    public WavContainer(InputStream in) {
+        super(in);
     }
 
     public InputStream getIStream() {

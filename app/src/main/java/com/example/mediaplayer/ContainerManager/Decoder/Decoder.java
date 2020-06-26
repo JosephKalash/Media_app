@@ -12,6 +12,7 @@ abstract public class Decoder {
     public Decoder(Container container) {
         this.container = container;
     }
+
     abstract public void Decode() throws IOException, WavFileException;
 
     public Container getContainer(){

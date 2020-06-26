@@ -6,6 +6,9 @@ abstract public class Container {
 
     InputStream mInputStream;
 
+    public Container (InputStream in) {
+        this.mInputStream = in;
+    }
 
 
 

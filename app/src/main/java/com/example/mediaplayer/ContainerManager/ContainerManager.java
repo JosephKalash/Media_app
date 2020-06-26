@@ -33,7 +33,9 @@ public class ContainerManager {
 
     public void Decode() throws IOException, WavFileException {
         if(container instanceof WavContainer){
-            decoder = new WavDecoder(container); decoder.Decode(); }
+            decoder = new WavDecoder(container);
+            decoder.Decode();
+        }
         else if(container instanceof MB3Container){
             decoder = new MjpegDecoder(container,file);
             decoder.Decode();

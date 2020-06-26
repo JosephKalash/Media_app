@@ -14,7 +14,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.mediaplayer.ContainerManager.Parser.WavParser.WavFileException;
 import com.example.mediaplayer.Data.Container.Container;
+import com.example.mediaplayer.Data.Container.MB3Container;
+import com.example.mediaplayer.Data.Container.WavContainer;
+import com.example.mediaplayer.Data.Container.mp4.MB4Container;
 import com.example.mediaplayer.reader.MediaFile;
 import com.example.mediaplayer.reader.StorageFilesReader;
 import com.google.android.material.tabs.TabLayout;
@@ -52,12 +56,20 @@ public class MainActivity extends AppCompatActivity {
 
         ContentResolver resolver = context.getContentResolver();
         try (InputStream stream = resolver.openInputStream(file.getUri())) {
+
+            if (file.getName().endsWith("wav")) {
+                mContainer = new WavContainer(stream);
+            }
+            if (file.getName().endsWith("mp3")) {
+                mContainer = new MB3Container(stream);
+            }
+            if (file.getName().endsWith("mp4")) {
+                mContainer = new MB4Container(stream);
+            }
             containerManager = new ContainerManager(mContainer);
+            containerManager.StartManaging();
 
-
-
-
-        } catch (IOException e) {
+        } catch (IOException | WavFileException e) {
             e.printStackTrace();
         }
     }
