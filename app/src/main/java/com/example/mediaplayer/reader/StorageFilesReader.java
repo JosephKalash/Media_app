@@ -4,32 +4,39 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.util.Log;
+
+import com.example.mediaplayer.PageFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class StorageFilesReader {
-    private static final String[] MEDIA_EXTENSIONS = {".mp4",".mp3",".wav", ".jpeg"};
     private static final String[] AUDIO_EXTENSIONS = {".mp3",".wav"};
     private static final String[] VIDEO_EXTENSIONS = {".mp4"};
-
-    private List audio = Arrays.asList(AUDIO_EXTENSIONS);
-    private List video = Arrays.asList(VIDEO_EXTENSIONS);
+    private Context mContext;
 
     private ArrayList<Audio> mAudios = new ArrayList<>();
     private ArrayList<Video> mVideos = new ArrayList<>();
 
+    public StorageFilesReader(Context context) {
+        mContext = context;
+    }
 
-    public void initializeReader(Context context) {
-        loadAudioFiles(context);
-        loadVideoFiles(context);
+    public void initializeReader() {
+
+        ReaderInitializer initializer = new ReaderInitializer();
+        initializer.execute();
+    }
+
+    private void fetchFilesFromStorage() {
+        loadAudioFiles();
+        loadVideoFiles();
     }
 
     // TODO: search for a way to get files by extension here, not in the get method
-    private void loadVideoFiles(Context context){
+    private void loadVideoFiles(){
 
         String[] projection = new String[] {
                 MediaStore.Video.Media._ID,
@@ -37,7 +44,7 @@ public class StorageFilesReader {
                 MediaStore.Video.Media.SIZE
         };
 
-        try (Cursor cursor = context.getContentResolver().query(
+        try (Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 projection,
                 null,
@@ -66,7 +73,7 @@ public class StorageFilesReader {
         }
 
     }
-    private void loadAudioFiles(Context context) {
+    private void loadAudioFiles() {
 
 
         String[] projection = new String[] {
@@ -75,7 +82,7 @@ public class StorageFilesReader {
                 MediaStore.Audio.Media.SIZE
         };
 
-        try (Cursor cursor = context.getContentResolver().query(
+        try (Cursor cursor = mContext.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 projection,
                 null,
@@ -150,6 +157,17 @@ public class StorageFilesReader {
             }
         }
         return null;
+    }
+
+
+    private class ReaderInitializer extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            fetchFilesFromStorage();
+            publishProgress();
+            return null;
+        }
     }
 
 }

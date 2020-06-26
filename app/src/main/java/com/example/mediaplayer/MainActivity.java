@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
 
-        stReader = new StorageFilesReader();
+        stReader = new StorageFilesReader(getApplicationContext());
         checkStorageAccessPermission();
 
         viewPager = findViewById(R.id.pager);
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 //for first time data will be loaded here
                 //then it will be loaded in splash screen
                 //because if we could not have permission then we could not load data in splash screen window
-                stReader.initializeReader(getApplicationContext());
+                stReader.initializeReader();
             }
         }
     }
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     1);
 
         } else{//load files if permission was granted
-            stReader.initializeReader(getApplicationContext());
+            stReader.initializeReader();
         }
     }
 
