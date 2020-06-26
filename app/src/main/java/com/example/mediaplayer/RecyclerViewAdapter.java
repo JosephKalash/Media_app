@@ -17,7 +17,6 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    // TODO: something happened with media file, fix it
     private Context mContext;
     private List<MediaFile> mediaFiles;
     int mImageResourceId;
@@ -47,7 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mediaFiles.size();
     }
 
-    class FileLayoutHolder extends RecyclerView.ViewHolder{
+    class FileLayoutHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView thumbnail;
         TextView mediaTitle;
@@ -60,6 +59,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mediaTitle = itemView.findViewById(R.id.media_title_text_view);
             ic_more_btn = itemView.findViewById(R.id.ic_more_btn);
 
+            mediaTitle.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            String title = mediaTitle.getText().toString();
+            MainActivity.doActionToFile(title, mContext);
         }
     }
 

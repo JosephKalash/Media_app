@@ -24,6 +24,7 @@ public class StorageFilesReader {
         mContext = context;
     }
 
+    // this method will be called by the main activity in order to initialize audio, video files
     public void initializeReader() {
 
         ReaderInitializer initializer = new ReaderInitializer();
@@ -111,6 +112,8 @@ public class StorageFilesReader {
         }
     }
 
+    // this method returns list of MediaFiles which represents audio and video files, these
+    // types can return input stream that can be passed to container manager
     public ArrayList<MediaFile> getAudioFies() {
         ArrayList<MediaFile> supportedAudios = new ArrayList<>();
 
@@ -141,19 +144,19 @@ public class StorageFilesReader {
         return supportedVideos;
     }
 
-    public MediaFile getAudioFileByName(String name){
-        for (int i = 0; i < mAudios.size(); i ++) {
-            if (mAudios.get(i).getName().equals(name)) {
-                return mAudios.get(i);
+    // this method return a media file after clicking on the filename
+    public MediaFile getFileByName(String name){
+        if (name.endsWith(".mp4")) {
+            for (int i = 0; i < mVideos.size(); i ++) {
+                if (mVideos.get(i).getName().equals(name)) {
+                    return mVideos.get(i);
+                }
             }
-        }
-        return null;
-    }
-
-    public MediaFile getVideoFileByName(String name){
-        for (int i = 0; i < mVideos.size(); i ++) {
-            if (mVideos.get(i).getName().equals(name)) {
-                return mVideos.get(i);
+        } else if (name.endsWith("mp3") || name.endsWith("wav")) {
+            for (int i = 0; i < mAudios.size(); i ++) {
+                if (mAudios.get(i).getName().equals(name)) {
+                    return mAudios.get(i);
+                }
             }
         }
         return null;

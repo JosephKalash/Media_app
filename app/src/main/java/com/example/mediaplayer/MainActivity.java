@@ -5,12 +5,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.example.mediaplayer.reader.MediaFile;
 import com.example.mediaplayer.reader.StorageFilesReader;
 import com.google.android.material.tabs.TabLayout;
 
@@ -24,21 +28,31 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.mediaplayer.ContainerManager.ContainerManager;
 import com.example.mediaplayer.Data.Data;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
     Data data;
-    ContainerManager containerManager;
     List<String> Format;
     ViewPager viewPager;
     static StorageFilesReader stReader;
+    static ContainerManager containerManager;
     private TabLayout mTabLayout;
 
-    // TODO: these two methods will be called from recycler view holder after clicking on an item
-    public static void playAudioFile(String name){
-    }
-    public static void playVideoFile(String name){
+
+    // this methods will be called from recycler view holder after clicking on an item
+    public static void doActionToFile(String name, Context context) {
+        MediaFile file = stReader.getFileByName(name);
+
+        ContentResolver resolver = context.getContentResolver();
+        try (InputStream stream = resolver.openInputStream(file.getUri())) {
+            containerManager = new ContainerManager(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

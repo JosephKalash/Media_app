@@ -7,17 +7,15 @@ import com.example.mediaplayer.Data.Container.Container;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ContainerManager {
-    Container container;
     Parser parser;
     Decoder decoder;
+    InputStream in;
 
-    public ContainerManager(Container container) {
-        this.container = container;
-    }
-    public Container getContainer(){
-        return container;
+    public ContainerManager(InputStream in) {
+        this.in = in;
     }
 
     public void Decode(){ }
