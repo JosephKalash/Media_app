@@ -1,5 +1,7 @@
 package com.example.mediaplayer.ContainerManager;
 
+import android.util.Log;
+
 import com.example.mediaplayer.ContainerManager.Decoder.Decoder;
 import com.example.mediaplayer.ContainerManager.Parser.Parser;
 import com.example.mediaplayer.ContainerManager.Parser.WavParser.WavFileException;
@@ -12,10 +14,11 @@ import java.io.InputStream;
 public class ContainerManager {
     Parser parser;
     Decoder decoder;
-    InputStream in;
+    Container mContainer;
 
-    public ContainerManager(InputStream in) {
-        this.in = in;
+    public ContainerManager(Container container) {
+        this.mContainer = container;
+        Log.d("FUCKERS", "Fucker");
     }
 
     public void Decode(){ }

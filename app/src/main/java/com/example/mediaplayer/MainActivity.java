@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.mediaplayer.Data.Container.Container;
 import com.example.mediaplayer.reader.MediaFile;
 import com.example.mediaplayer.reader.StorageFilesReader;
 import com.google.android.material.tabs.TabLayout;
@@ -38,9 +39,11 @@ public class MainActivity extends AppCompatActivity {
     Data data;
     List<String> Format;
     ViewPager viewPager;
-    static StorageFilesReader stReader;
-    static ContainerManager containerManager;
     private TabLayout mTabLayout;
+
+    static StorageFilesReader stReader;
+    private static Container mContainer;
+    private static ContainerManager containerManager;
 
 
     // this methods will be called from recycler view holder after clicking on an item
@@ -49,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
         ContentResolver resolver = context.getContentResolver();
         try (InputStream stream = resolver.openInputStream(file.getUri())) {
-            containerManager = new ContainerManager(stream);
+            containerManager = new ContainerManager(mContainer);
+
+
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
