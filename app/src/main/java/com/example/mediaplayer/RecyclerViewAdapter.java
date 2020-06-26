@@ -10,16 +10,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mediaplayer.reader.MediaFile;
+
 import java.io.File;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    // TODO: something happened with media file, fix it
     private Context mContext;
-    private List<File> mediaFiles;
+    private List<MediaFile> mediaFiles;
     int mImageResourceId;
 
-    RecyclerViewAdapter(List<File> mediaFiles , Context mContext, int thumbnailImage){
+    RecyclerViewAdapter(List<MediaFile> mediaFiles , Context mContext, int thumbnailImage){
         this.mContext = mContext;
         this.mediaFiles = mediaFiles;
         mImageResourceId = thumbnailImage;
@@ -35,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((FileLayoutHolder)holder).videoTitle.setText(mediaFiles.get(position).toString());
+        ((FileLayoutHolder)holder).mediaTitle.setText(mediaFiles.get(position).getName());
         ((FileLayoutHolder)holder).thumbnail.setImageResource(mImageResourceId);
     }
 
@@ -47,14 +50,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     class FileLayoutHolder extends RecyclerView.ViewHolder{
 
         ImageView thumbnail;
-        TextView videoTitle;
+        TextView mediaTitle;
         ImageView ic_more_btn;
 
         public FileLayoutHolder(@NonNull View itemView) {
             super(itemView);
 
             thumbnail = itemView.findViewById(R.id.thumbnail);
-            videoTitle = itemView.findViewById(R.id.videotitle);
+            mediaTitle = itemView.findViewById(R.id.media_title_text_view);
             ic_more_btn = itemView.findViewById(R.id.ic_more_btn);
 
         }

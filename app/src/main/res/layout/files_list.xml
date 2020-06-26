@@ -15,7 +15,7 @@
         />
 
     <TextView
-        android:id="@+id/videotitle"
+        android:id="@+id/media_title_text_view"
         android:layout_width="0dp"
         android:layout_marginLeft="8dp"
         android:layout_height="wrap_content"

@@ -10,17 +10,12 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.mediaplayer.ContainerManager.Decoder.Mjpeg.MjpegDecoder;
-import com.example.mediaplayer.MediaControl.VideoRender;
+import com.example.mediaplayer.reader.StorageFilesReader;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -39,19 +34,19 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     static StorageFilesReader stReader;
     private TabLayout mTabLayout;
-    private boolean permission;
 
-    public static File getContainer(String name){
-        return stReader.getFileByName(name);
+    // TODO: these two methods will be called from recycler view holder after clicking on an item
+    public static void playAudioFile(String name){
+    }
+    public static void playVideoFile(String name){
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        setTheme(R.style.AppTheme_NoActionBar);
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
-
 
         stReader = new StorageFilesReader();
         checkStorageAccessPermission();
@@ -63,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(viewPager);
 
-
-            }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -77,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 //for first time data will be loaded here
                 //then it will be loaded in splash screen
                 //because if we could not have permission then we could not load data in splash screen window
-                stReader.loadMediaFiles(this);
+                stReader.initializeReader(getApplicationContext());
             }
         }
     }
@@ -96,8 +90,10 @@ public class MainActivity extends AppCompatActivity {
                     1);
 
         } else{//load files if permission was granted
-            stReader.loadMediaFiles(this);}
+            stReader.initializeReader(getApplicationContext());
+        }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
