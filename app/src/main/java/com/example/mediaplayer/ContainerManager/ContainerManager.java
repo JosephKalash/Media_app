@@ -28,7 +28,7 @@ public class ContainerManager {
 
     public ContainerManager(Container container) {
         this.mContainer = container;
-        Log.d("FUCKERS", "Fucker");
+        Log.d("FUCKERS IN CONT_MAN", "Fucker");
     }
 
     public void Decode() throws IOException, WavFileException {
@@ -37,11 +37,11 @@ public class ContainerManager {
             decoder.Decode();
         }
         else if(container instanceof MB3Container){
-            decoder = new MjpegDecoder(container,file);
+            decoder = new Mp3Decoder(container);
             decoder.Decode();
         }
         else if(container instanceof MB4Container){
-            decoder = new Mp3Decoder(container);
+            decoder = new MjpegDecoder(container, file);
             decoder.Decode();
         }
     }
