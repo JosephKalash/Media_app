@@ -9,7 +9,6 @@ import com.example.mediaplayer.Data.Container.mp4.Stsz;
 import com.example.mediaplayer.Data.Container.mp4.Trak;
 import com.example.mediaplayer.Data.Container.mp4.TrakFormat;
 
-import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -36,11 +35,13 @@ public class MB4Parser extends Parser {
         in = container.getInputStream();
         mTraks = new ArrayList<>();
 
+/*
         try {
-            mAllBytes = IOUtils.toByteArray(in);
+            //mAllBytes = IOUtils.toByteArray(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
+*/
 
     }
 
