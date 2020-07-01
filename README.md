@@ -1,6 +1,6 @@
 # TODO list
 
-* fix all errors related to decoder
+* fix all errors related to decoder (mp3Decoder fixed)
 * change project structure in order to synch audio with video correctly
 * render video and audio correctly
 * add support for playlists
