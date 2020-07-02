@@ -14,18 +14,20 @@ public class MjpegDecoder extends Decoder {
     MjpegParser MjpegParser;
     File JpegFile;
     static ArrayList<JpegFrame> MjpegStream=new ArrayList<JpegFrame>();
+
     public MjpegDecoder(Container container, File File) {
         super(container);
         this.JpegFile=File;
         MjpegParser=new MjpegParser(this.JpegFile);
     }
+
     private ArrayList<JpegFrame> Parse ()
     {
         return MjpegParser.ReadMjpeg();
     }
     @Override
     public void Decode() {
-          MjpegStream=  Parse();
+          MjpegStream = Parse();
           DecodeHuffmandata(MjpegStream.get(0));
 
     }

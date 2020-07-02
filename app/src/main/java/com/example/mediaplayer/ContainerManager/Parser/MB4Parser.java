@@ -9,12 +9,15 @@ import com.example.mediaplayer.Data.Container.mp4.Stsz;
 import com.example.mediaplayer.Data.Container.mp4.Trak;
 import com.example.mediaplayer.Data.Container.mp4.TrakFormat;
 
+
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,34 +25,30 @@ import java.util.List;
 public class MB4Parser extends Parser {
 
     private byte[] mAllBytes;
-    private FileInputStream in;
+    private InputStream in;
     private ArrayList<Trak> mTraks;
 
 
     public MB4Parser(Container container) {
         super(container);
 
+        in = container.getInputStream();
         mTraks = new ArrayList<>();
 
+/*
         try {
-            int size = in.available();
-            mAllBytes = new byte[size];
-
-            BufferedInputStream buf = new BufferedInputStream(in);
-            buf.read(mAllBytes, 0, mAllBytes.length);
-            buf.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //mAllBytes = IOUtils.toByteArray(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+*/
 
     }
 
     @Override
     public void parse() {
         TrakBuilder builder = new TrakBuilder();
+
         Trak trak1 = builder.buildTrak(0);
         Trak trak2 = builder.buildTrak(1);
 

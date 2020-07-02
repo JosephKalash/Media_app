@@ -28,8 +28,8 @@ public class WavDecoder extends Decoder {
         long [] val = getSampleBuffer();
         int number = (int) (DecodingContainer.getNumberOfChannels()*DecodingContainer.getNumberOfFrames());
         ByteBuffer = writeBytes( val,number);
-DecodingContainer.setAudioStream(ByteBuffer);
-      }
+        DecodingContainer.setAudioStream(ByteBuffer);
+    }
 
     private long readSample() throws IOException, WavFileException
     {

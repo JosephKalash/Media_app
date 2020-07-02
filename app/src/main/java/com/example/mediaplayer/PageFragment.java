@@ -1,6 +1,7 @@
 package com.example.mediaplayer;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mediaplayer.reader.MediaFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ public class PageFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerViewAdapter;
-    private ArrayList<File> mModelData;
+    private ArrayList<MediaFile> mMediaFiles;
 
     public static PageFragment newInstance(int index) {
         PageFragment fragment = new PageFragment();
@@ -47,18 +50,18 @@ public class PageFragment extends Fragment {
         int pageNumber = getArguments().getInt(FRAGMENT_INDEX);
         if (pageNumber == 0) {
 
-            mModelData = stReader.getAudioFies();
-            mRecyclerViewAdapter = new RecyclerViewAdapter(mModelData, getActivity(),
+            mMediaFiles = stReader.getAudioFies();
+            mRecyclerViewAdapter = new RecyclerViewAdapter(mMediaFiles, getActivity(),
                     R.drawable.ic_music);
         }
         if (pageNumber == 1) {
 
-            mModelData = stReader.getVideoFies();
-            mRecyclerViewAdapter = new RecyclerViewAdapter(mModelData, getActivity(),
+            mMediaFiles = stReader.getVideoFies();
+            mRecyclerViewAdapter = new RecyclerViewAdapter(mMediaFiles, getActivity(),
                     R.drawable.ic_video);
         }
         else {
-            mModelData = stReader.getAudioFies();
+            mMediaFiles = stReader.getAudioFies();
         }
 
         mRecyclerView = view.findViewById(R.id.recyclerView);

@@ -14,10 +14,11 @@ public class VideoRender {
     ArrayList<MCU> MCUs;
 
     public VideoRender(Container container, long FrameWidth,ArrayList<MCU> MCUS) {
+
         MCUs=new ArrayList<>();
         this.MCUs=MCUS;
-        MB4Container s=new MB4Container();
-        s.getTraks().get(0);
+        ((MB4Container)container).getTraks().get(0);
+
     }
     public void draw(){
         Paint myPaint = new Paint();
