@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> Format;
     ViewPager viewPager;
     private TabLayout mTabLayout;
+    private static final int REQUEST_STORAGE = 1;
 
     static StorageFilesReader stReader;
     private static Container mContainer;
@@ -96,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 1){
+        if (requestCode == REQUEST_STORAGE){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 //for first time data will be loaded here
                 //then it will be loaded in splash screen
@@ -119,29 +118,12 @@ public class MainActivity extends AppCompatActivity {
             //ask for permissions
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    1);
+                    REQUEST_STORAGE);
 
         } else{//load files if permission was granted
             stReader.initializeReader();
         }
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode){
-            case 1:
-                if (resultCode == Activity.RESULT_OK){
-                    Uri fileUri = data.getData();
-                    getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                            | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                }
-        }
-    }
-
-
 
     public class PagerAdapter extends FragmentPagerAdapter {
         public PagerAdapter(FragmentManager fm) {
