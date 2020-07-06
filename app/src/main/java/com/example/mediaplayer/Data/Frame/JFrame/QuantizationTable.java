@@ -1,72 +1,36 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.example.mediaplayer.Data.Frame.JFrame;
+
 /**
- <
- * This class is Table inside The Jpeg File Used To
- * Know The DCT Values .
-
- * Every Value on @Values Matrix corresponding to value(pixel) from
- * the MCU Channel
-
- * We Can Define More Than one Table with Same Tag @DQT(FFDB)
- But The @LQ Length will involve The Size of the Two Tables
-
-
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
- QValue | QValue | QValue | QValue | QValue | QValue | QValue | QValue |
-
- >
+ *
+ * @author DELL3567
  */
 public class QuantizationTable {
-    long   TableLength;
-    long   TableKind;
-    long[] Values;
+    public int [] table=new int [64] ;
 
-    public QuantizationTable(long tableLength, long tableKind, long[] values) {
-        TableLength = tableLength;
-        TableKind = tableKind;
-        Values = values;
+    public QuantizationTable() {
+    }
+    
+    public int[] getTable() {
+        return table;
     }
 
-    public long getTableLength() {
-        return TableLength;
+    public void setTable(int[] table) {
+        this.table = table;
     }
 
-    public void setTableLength(long tableLength) {
-        TableLength = tableLength;
+    public boolean isSet() {
+        return set;
     }
 
-    public long getTableKind() {
-        return TableKind;
+    public void setSet(boolean set) {
+        this.set = set;
     }
-
-    public void setTableKind(long tableKind) {
-        TableKind = tableKind;
-    }
-
-    public long[] getValues() {
-        return Values;
-    }
-
-    public void setValues(long[] values) {
-        this.Values = values;
-    }
-    public void print ()
-    {
-        System.out.println("QuantizationTable : ");
-        System.out.println("Table Length : "+TableLength);
-        System.out.println("Table Kind : "+TableKind);
-        for (int i=1;i<=Values.length;i++){
-            System.out.print(Values[i-1]+" | ");
-            if(i!=0&&i%8==0)
-                System.out.println();
-        }
-        System.out.println();
-
-    }
+    public boolean set = false;
+    
+    
 }

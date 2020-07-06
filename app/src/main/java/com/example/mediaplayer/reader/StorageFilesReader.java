@@ -146,8 +146,8 @@ public class StorageFilesReader {
 
     // this method return a media file after clicking on the filename
     public MediaFile getFileByName(String name){
-        if (name.endsWith(".mp4")) {
-            for (int i = 0; i < mVideos.size(); i ++) {
+        if (name.endsWith(".mp4") )
+        {for (int i = 0; i < mVideos.size(); i ++) {
                 if (mVideos.get(i).getName().equals(name)) {
                     return mVideos.get(i);
                 }

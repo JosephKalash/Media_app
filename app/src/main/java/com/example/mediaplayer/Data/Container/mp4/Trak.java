@@ -15,6 +15,9 @@ public class Trak {
     private int creattionTime;
     private ArrayList<TrakFrame> trakData;
 
+    public Trak() {
+    }
+
     public Trak(int trakDuration, int modificationTime,
                 int timeScale, int trakId, boolean enabled,
                 TrakFormat format, int creattionTime, ArrayList<TrakFrame> trakData) {
