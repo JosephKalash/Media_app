@@ -24,11 +24,9 @@ public class ContainerManager {
     Parser parser;
     Decoder decoder;
     File file;
-    Container mContainer;
 
     public ContainerManager(Container container) {
-        this.mContainer = container;
-        Log.d("FUCKERS IN CONT_MAN", "Fucker");
+        this.container = container;
     }
 
     public void Decode() throws IOException, WavFileException {
@@ -61,6 +59,6 @@ public class ContainerManager {
     }
     public void StartManaging() throws IOException, WavFileException {
         Parse();
-        Decode();
+        //Decode();
     }
 }
