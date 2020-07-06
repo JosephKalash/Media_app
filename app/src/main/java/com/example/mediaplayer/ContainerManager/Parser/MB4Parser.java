@@ -86,7 +86,6 @@ public class MB4Parser extends Parser {
 
             mCurrentPosition = searchForBoxInSameLevel("moov", 0);
 
-            // TODO: delete
             Log.d("moov", Integer.toString(mCurrentPosition));
 
             mCurrentPosition = calculateBoxPositionAfterEntering("moov", mCurrentPosition);
@@ -94,7 +93,6 @@ public class MB4Parser extends Parser {
 
             for (int i = 0; i <= trakNumber; i ++) {
                 mCurrentPosition = searchForBoxInSameLevel("trak", mCurrentPosition);
-                // TODO: delete
                 Log.d("trak", Integer.toString(mCurrentPosition));
             }
             mCurrentPosition = calculateBoxPositionAfterEntering("trak", mCurrentPosition);
@@ -109,7 +107,6 @@ public class MB4Parser extends Parser {
 
             mCurrentPosition = searchForBoxInSameLevel("hdlr", mCurrentPosition);
             mCurrentPosition = calculateBoxPositionAfterEntering("hdlr", mCurrentPosition);
-            // TODO: delete
             Log.d("hdlr", Integer.toString(mCurrentPosition));
             mAnalyzer.readInfoFromHdlr();
 
@@ -346,10 +343,10 @@ public class MB4Parser extends Parser {
                         }
 
                         frames.add(new TrakFrame(frame));
+
                     }
 
 
-                    // TODO: delete
                     Log.d("size", Integer.toString(frames.size()));
                     return frames;
 
@@ -377,21 +374,17 @@ public class MB4Parser extends Parser {
 
                         if (i == stsc.getmEntriesCount() -2) {
                             int finalChunk = stsc.getmFirstChunk(i + 1);
-                            for (int sampleInChunk = 0; sampleInChunk < stsc.getmSamplesPerChunk(i); sampleInChunk++) {
+                            for (int sampleInChunk = 0; sampleInChunk <
+                                    stsc.getmSamplesPerChunk(i + 1); sampleInChunk++) {
+
                                 int baseReference = calculateBaseReference(stco.getChunkOffset(chunkNumber),
                                         sampleNumber,  sampleInChunk, stsz);
                                 frame = calculateFrame(baseReference,
                                         stsz.getmSamplesSize(sampleInChunk + sampleNumber));
 
                                 frames.add(new TrakFrame(frame));
-
                             }
-                            chunkNumber++;
-                            sampleNumber += stsc.getmSamplesPerChunk(i + 1);
-                            FileOutputStream fout = null;
 
-
-                            // TODO: delete
                             Log.d("size", Integer.toString(frames.size()));
                             return frames;
                         }
