@@ -41,8 +41,8 @@ public class ContainerManager {
             decoder.Decode();
         }
         else if(container instanceof MB4Container){
-            decoder = new MjpegDecoder(container, file);
-            decoder.Decode();
+           // decoder = new MjpegDecoder(container, file);
+          //  decoder.Decode();
         }
     }
     public void Parse() throws IOException, WavFileException {
