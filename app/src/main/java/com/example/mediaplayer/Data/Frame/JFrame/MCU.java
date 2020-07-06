@@ -1,130 +1,140 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.example.mediaplayer.Data.Frame.JFrame;
 
-/**
- *
- * @author DELL3567
- */
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+
 public class MCU {
-    public  int [] y=new int [64];
-    public  int [] r=new int[64];
-    public  int [] cb=new int[64];
-    public  int [] g=new int [64];
-    public  int [] cr=new int[64];
-    public  int [] b=new int [64];
 
-    public MCU() {
-    }
 
-    MCU(int []y,int []cb, int []cr)
-    {
-        this.y=y;
-        this.cb=cb;
-        this.cr=cr;
 
-    }
-    
-    public int[] getY() {
-        return y;
-    }
+    /**
 
-    public void setY(int[] y) {
-        this.y = y;
-    }
 
-    public int[] getR() {
-        return r;
-    }
+     DC | AC | AC | AC | AC | AC | AC | AC |
+     AC | AC | AC | AC | AC | AC | AC | AC |
+     AC | AC | AC | AC | AC | AC | AC | AC |
+     AC | AC | AC | AC | AC | AC | AC | AC |
+     AC | AC | AC | AC | AC | AC | AC | AC |
+     AC | AC | AC | AC | AC | AC | AC | AC |
+     AC | AC | AC | AC | AC | AC | AC | AC |
 
-    public void setR(int[] r) {
-        this.r = r;
-    }
+     • The DC is Relative DC Means To get The Real Value You have to add The previous DC
+     • First DC is a real Value
+     • Defining a DRI Means That The DC with number RI is a Real Value
+     */
 
-    public int[] getCb() {
-        return cb;
-    }
 
-    public void setCb(int[] cb) {
-        this.cb = cb;
-    }
+        long []Y=new long [64];
+        long []Cb=new long [64];
+        long []Cr=new long [64];
+        long width;
+        long height;
 
-    public int[] getG() {
-        return g;
-    }
+        public long[] getCb() {
+            return Cb;
+        }
 
-    public void setG(int[] g) {
-        this.g = g;
-    }
+        public void setCb(long[] Cb) {
+            this.Cb = Cb;
+        }
 
-    public int[] getCr() {
-        return cr;
-    }
+        public long[] getCr() {
+            return Cr;
+        }
 
-    public void setCr(int[] cr) {
-        this.cr = cr;
-    }
+        public void setCr(long[] Cr) {
+            this.Cr = Cr;
+        }
 
-    public int[] getB() {
-        return b;
-    }
+        public long getWidth() {
+            return width;
+        }
 
-    public void setB(int[] b) {
-        this.b = b;
-    }
+        public void setWidth(long width) {
+            this.width = width;
+        }
 
-    public int [] getComponent(int index)
-    {
-        switch(index){
-            case 0:return y;
-            case 1:return cb;
-            case 2:return cr;
-            default:return null;
+        public long getHeight() {
+            return height;
+        }
+
+        public void setHeight(long height) {
+            this.height = height;
+        }
+
+
+        public MCU() {
+            for(int i=0;i<64;i++)
+            {
+                Y[i]=new Long(0);
+                Cb[i]=new Long(0);
+                Cr[i]=new Long(0);
+            }
+        }
+
+        public MCU(long []Y,long []Cb,long []Cr) {
+            this();this.Y=Y;
+            this.Cb=Cb;
+            this.Cr=Cr;
+        }
+
+
+        public long[] getY() {
+            return Y;
+        }
+
+        public void setY(long[] Y) {
+            this.Y = Y;
+        }
+
+
+        public long[] getComponent(int i) {
+
+            switch(i){
+                case 1:  return Y;
+                case 2:  return Cb;
+                case 3:  return Cr;
+
+
+
+            }
+            return null;
+        }
+
+        public void print()
+        {
+            System.out.println("");
+            System.out.println("");
+
+            System.out.println("Luminance");
+            for(int i=0;i<64;i++){
+                if(i%8==0)
+                    System.out.println();
+                System.out.print(Y[i]+" " );
+            }
+            System.out.println("");
+
+            System.out.println("");
+            System.out.println("Cb");
+            for(int i=0;i<64;i++)
+            {if(i%8==0)
+                System.out.println();
+                System.out.print(Cb[i]+" ");
+            }
+            System.out.println("");
+            System.out.println("");
+
+            System.out.println("Cr");
+            for(int i=0;i<64;i++){
+                if(i%8==0)
+                    System.out.println();
+
+                System.out.print(Cr[i]+" ");
+            }
 
         }
+
+
     }
-    public int [] getRGBComponent(int index)
-
-    {
-        switch(index){
-            case 0:return r;
-            case 1:return g;
-            case 2:return b;
-            default:return null;
-
-        }
-    }
-
-    void printYCbCR(){
-                System.out.println("");
-
-        System.out.println("Y");
-                        System.out.println("");
-
-        for(int i=0;i<64;i++){
-                if(i%8==0)System.out.println();
-            System.out.print(y[i]+" ");
-        }
-                System.out.println("");
-                System.out.println("CB");
-                System.out.println("");
-
-        for(int i=0;i<64;i++){      
-            if(i%8==0)System.out.println();
-
-            System.out.print(cb[i]+" ");}   
-        
-        
-        System.out.println("Cr");
-                System.out.println("");
-
-        for(int i=0;i<64;i++){
-                            if(i%8==0)System.out.println();
-            System.out.print(cr[i]+" ");
-        }
-    } 
-    
-}

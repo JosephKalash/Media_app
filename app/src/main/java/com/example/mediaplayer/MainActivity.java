@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
             if (file.getName().endsWith("wav")) {
                 mContainer = new WavContainer(stream);
             }
-
             if (file.getName().endsWith("mp3")) {
                 mContainer = new MB3Container(stream);
             }
@@ -74,12 +73,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException | WavFileException e) {
             e.printStackTrace();
         }
-        /*
-        *
-            MyCanavas=new MyCanvas(this);
-            MyCanavas.setBackgroundColor(Color.RED);
-            setContentView(MyCanavas);
-        */
     }
 
     @Override
