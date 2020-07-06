@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 abstract public class Container {
 
-    InputStream mInputStream;
+    public InputStream mInputStream;
 
     public Container (InputStream in) {
         this.mInputStream = in;

@@ -15,7 +15,7 @@ public class MB3Container extends Container {
         AudioStream = audioStream;
     }
 
-    public Frame[] getAudioStream() {
-        return AudioStream;
+    public InputStream getAudioStream() {
+        return mInputStream;
     }
 }

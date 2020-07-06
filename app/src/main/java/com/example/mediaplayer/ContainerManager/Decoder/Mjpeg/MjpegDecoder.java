@@ -26,7 +26,7 @@ public class MjpegDecoder extends Decoder {
         return MjpegParser.ReadMjpeg();
     }
     @Override
-    public void Decode() {
+    public void decode() {
           MjpegStream = Parse();
           DecodeHuffmandata(MjpegStream.get(0));
 

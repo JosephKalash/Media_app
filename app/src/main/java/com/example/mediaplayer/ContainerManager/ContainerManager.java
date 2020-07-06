@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.example.mediaplayer.ContainerManager.Decoder.Decoder;
 import com.example.mediaplayer.ContainerManager.Decoder.Mjpeg.MjpegDecoder;
-import com.example.mediaplayer.ContainerManager.Decoder.Mp3Decoder;
+import com.example.mediaplayer.ContainerManager.Decoder.mp3Decoder.Mp3Decoder;
 import com.example.mediaplayer.ContainerManager.Decoder.WavDecoder;
 import com.example.mediaplayer.ContainerManager.Parser.MB3Parser;
 import com.example.mediaplayer.ContainerManager.Parser.MB4Parser;
@@ -34,15 +34,15 @@ public class ContainerManager {
     public void Decode() throws IOException, WavFileException {
         if(container instanceof WavContainer){
             decoder = new WavDecoder(container);
-            decoder.Decode();
+            decoder.decode();
         }
         else if(container instanceof MB3Container){
-            decoder = new Mp3Decoder(container);
-            decoder.Decode();
+           /* decoder = new Mp3Decoder();
+            decoder.decode();*/
         }
         else if(container instanceof MB4Container){
             decoder = new MjpegDecoder(container, file);
-            decoder.Decode();
+            decoder.decode();
         }
     }
     public void Parse() throws IOException, WavFileException {
@@ -51,8 +51,8 @@ public class ContainerManager {
             parser.parse();
         }
         else if(container instanceof MB3Container){
-            parser = new MB3Parser(container);
-            parser.parse();
+            /*parser = new MB3Parser(container);
+            parser.parse();*/
         }
         else if (container instanceof MB4Container){
             parser = new MB4Parser(container);
