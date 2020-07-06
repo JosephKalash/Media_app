@@ -56,6 +56,7 @@ public class MB4Parser extends Parser {
 
         mTraks.add(trak1);
         mTraks.add(trak2);
+
     }
 
     public ArrayList<Trak> getTraks() {
@@ -85,15 +86,11 @@ public class MB4Parser extends Parser {
             Stsc stsc;
 
             mCurrentPosition = searchForBoxInSameLevel("moov", 0);
-
-            Log.d("moov", Integer.toString(mCurrentPosition));
-
             mCurrentPosition = calculateBoxPositionAfterEntering("moov", mCurrentPosition);
 
 
             for (int i = 0; i <= trakNumber; i ++) {
                 mCurrentPosition = searchForBoxInSameLevel("trak", mCurrentPosition);
-                Log.d("trak", Integer.toString(mCurrentPosition));
             }
             mCurrentPosition = calculateBoxPositionAfterEntering("trak", mCurrentPosition);
 
@@ -107,7 +104,6 @@ public class MB4Parser extends Parser {
 
             mCurrentPosition = searchForBoxInSameLevel("hdlr", mCurrentPosition);
             mCurrentPosition = calculateBoxPositionAfterEntering("hdlr", mCurrentPosition);
-            Log.d("hdlr", Integer.toString(mCurrentPosition));
             mAnalyzer.readInfoFromHdlr();
 
             mCurrentPosition = calculateBoxPositionBeforeEntering("hdlr", mCurrentPosition);
@@ -347,7 +343,6 @@ public class MB4Parser extends Parser {
                     }
 
 
-                    Log.d("size", Integer.toString(frames.size()));
                     return frames;
 
                     // getting audio stream
@@ -385,7 +380,6 @@ public class MB4Parser extends Parser {
                                 frames.add(new TrakFrame(frame));
                             }
 
-                            Log.d("size", Integer.toString(frames.size()));
                             return frames;
                         }
                     }

@@ -92,4 +92,17 @@ public class Trak {
     public void setTrakData(ArrayList<TrakFrame> trakData) {
         this.trakData = trakData;
     }
+
+    @Override
+    public String toString() {
+        return "Trak{" +
+                "trakDuration=" + trakDuration +
+                ", modificationTime=" + modificationTime +
+                ", timeScale=" + timeScale +
+                ", trakId=" + trakId +
+                ", enabled=" + enabled +
+                ", format=" + format +
+                ", creattionTime=" + creattionTime +
+                '}';
+    }
 }
