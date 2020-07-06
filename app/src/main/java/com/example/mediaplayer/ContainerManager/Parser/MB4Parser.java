@@ -2,12 +2,15 @@ package com.example.mediaplayer.ContainerManager.Parser;
 
 
 
+import android.util.Log;
+
 import com.example.mediaplayer.Data.Container.Container;
 import com.example.mediaplayer.Data.Container.mp4.Stco;
 import com.example.mediaplayer.Data.Container.mp4.Stsc;
 import com.example.mediaplayer.Data.Container.mp4.Stsz;
 import com.example.mediaplayer.Data.Container.mp4.Trak;
 import com.example.mediaplayer.Data.Container.mp4.TrakFormat;
+import com.example.mediaplayer.Data.Frame.TrakFrame;
 
 
 import java.io.BufferedInputStream;
@@ -35,13 +38,12 @@ public class MB4Parser extends Parser {
         in = container.getInputStream();
         mTraks = new ArrayList<>();
 
-/*
         try {
-            //mAllBytes = IOUtils.toByteArray(in);
+            mAllBytes = new byte[in.available()];
+            in.read(mAllBytes, 0, in.available());
         } catch (IOException e) {
             e.printStackTrace();
         }
-*/
 
     }
 
@@ -69,12 +71,13 @@ public class MB4Parser extends Parser {
         private int mTrakId;
         private TrakFormat mFormat;
         private int mCreattionTime;
-        private byte[] trakData;
+        private ArrayList<TrakFrame> trakData;
 
         TrakBuilder() {
             mAnalyzer = new BoxAnalyzer();
             mCurrentPosition = 0;
         }
+
 
         private Trak buildTrak(int trakNumber) {
             Stco stco;
@@ -82,11 +85,17 @@ public class MB4Parser extends Parser {
             Stsc stsc;
 
             mCurrentPosition = searchForBoxInSameLevel("moov", 0);
+
+            // TODO: delete
+            Log.d("moov", Integer.toString(mCurrentPosition));
+
             mCurrentPosition = calculateBoxPositionAfterEntering("moov", mCurrentPosition);
 
 
             for (int i = 0; i <= trakNumber; i ++) {
                 mCurrentPosition = searchForBoxInSameLevel("trak", mCurrentPosition);
+                // TODO: delete
+                Log.d("trak", Integer.toString(mCurrentPosition));
             }
             mCurrentPosition = calculateBoxPositionAfterEntering("trak", mCurrentPosition);
 
@@ -100,6 +109,8 @@ public class MB4Parser extends Parser {
 
             mCurrentPosition = searchForBoxInSameLevel("hdlr", mCurrentPosition);
             mCurrentPosition = calculateBoxPositionAfterEntering("hdlr", mCurrentPosition);
+            // TODO: delete
+            Log.d("hdlr", Integer.toString(mCurrentPosition));
             mAnalyzer.readInfoFromHdlr();
 
             mCurrentPosition = calculateBoxPositionBeforeEntering("hdlr", mCurrentPosition);
@@ -315,12 +326,12 @@ public class MB4Parser extends Parser {
 
             }
 
-            private byte[] extractTrakData(Stco stco, Stsz stsz, Stsc stsc, int id) {
+            private ArrayList<TrakFrame> extractTrakData(Stco stco, Stsz stsz, Stsc stsc, int id) {
 
                 // will be used in calculating current chunk number
                 int chunkNumber = 0;
                 int sampleNumber = 0;
-                ByteArrayOutputStream frames = new ByteArrayOutputStream();
+                ArrayList<TrakFrame> frames = new ArrayList<>();
 
                 // getting video stream
                 if (id == 0) {
@@ -329,17 +340,18 @@ public class MB4Parser extends Parser {
                     for (int i = 0; i < stco.getEntriesCount(); i++) {
                         byte[] frame = new byte[stsz.getmSamplesSize(i)];
                         frameStart = stco.getChunkOffset(i);
-                        try {
-                            for (int j = 0; j < stsz.getmSamplesSize(i); j++) {
-                                frame[j] = mAllBytes[frameStart + j];
-                            }
-                            frames.write(frame);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+
+                        for (int j = 0; j < stsz.getmSamplesSize(i); j++) {
+                            frame[j] = mAllBytes[frameStart + j];
                         }
+
+                        frames.add(new TrakFrame(frame));
                     }
 
-                    return frames.toByteArray();
+
+                    // TODO: delete
+                    Log.d("size", Integer.toString(frames.size()));
+                    return frames;
 
                     // getting audio stream
                 } else if (id == 1){
@@ -355,11 +367,9 @@ public class MB4Parser extends Parser {
                                         sampleNumber,  sampleInChunk, stsz);
                                 frame = calculateFrame(baseReference,
                                         stsz.getmSamplesSize(sampleInChunk + sampleNumber));
-                                try {
-                                    frames.write(frame);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+
+                                frames.add(new TrakFrame(frame));
+
                             }
                             chunkNumber++;
                             sampleNumber += stsc.getmSamplesPerChunk(i);
@@ -372,17 +382,18 @@ public class MB4Parser extends Parser {
                                         sampleNumber,  sampleInChunk, stsz);
                                 frame = calculateFrame(baseReference,
                                         stsz.getmSamplesSize(sampleInChunk + sampleNumber));
-                                try {
-                                    frames.write(frame);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+
+                                frames.add(new TrakFrame(frame));
 
                             }
                             chunkNumber++;
                             sampleNumber += stsc.getmSamplesPerChunk(i + 1);
                             FileOutputStream fout = null;
-                            return frames.toByteArray();
+
+
+                            // TODO: delete
+                            Log.d("size", Integer.toString(frames.size()));
+                            return frames;
                         }
                     }
                 }

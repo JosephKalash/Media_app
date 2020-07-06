@@ -1,5 +1,9 @@
 package com.example.mediaplayer.Data.Container.mp4;
 
+import com.example.mediaplayer.Data.Frame.TrakFrame;
+
+import java.util.ArrayList;
+
 public class Trak {
 
     private int trakDuration;
@@ -9,11 +13,11 @@ public class Trak {
     private boolean enabled;
     private TrakFormat format;
     private int creattionTime;
-    byte[] trakData;
+    private ArrayList<TrakFrame> trakData;
 
     public Trak(int trakDuration, int modificationTime,
                 int timeScale, int trakId, boolean enabled,
-                TrakFormat format, int creattionTime, byte[] trakData) {
+                TrakFormat format, int creattionTime, ArrayList<TrakFrame> trakData) {
 
         this.trakDuration = trakDuration;
         this.modificationTime = modificationTime;
@@ -61,7 +65,7 @@ public class Trak {
         return format;
     }
 
-    public byte[] getTrakData() {
+    public ArrayList<TrakFrame> getTrakData() {
         return trakData;
     }
 
@@ -85,8 +89,7 @@ public class Trak {
         this.format = format;
     }
 
-    public void setTrakData(byte[] trakData) {
+    public void setTrakData(ArrayList<TrakFrame> trakData) {
         this.trakData = trakData;
     }
-
 }
