@@ -3,6 +3,7 @@ package com.example.mediaplayer.ContainerManager.Decoder.Mjpeg;
 
 import android.graphics.Color;
 
+import com.example.mediaplayer.ContainerManager.Decoder.Decoder;
 import com.example.mediaplayer.Data.Frame.JFrame.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.util.Vector;
 import static com.example.mediaplayer.ContainerManager.Decoder.Mjpeg.MjpegParser.*;
 
-public class MjpegDecoder {
+public class MjpegDecoder  {
 
 
     public static File SourceImage = new File("mjpg.Mjpg");
@@ -20,7 +21,10 @@ public class MjpegDecoder {
     public static byte Buffer[] = new byte[BytesToRead];
     public static int completeafter = 0;
 
-
+    public MjpegDecoder(byte [] jpeg)
+    {
+        Buffer=jpeg;
+    }
     // generate all Huffman codes based on symbols from a Huffman table
     static void generateCodes(HuffmanTable hTable) {
         int code = 0;
@@ -543,18 +547,17 @@ public class MjpegDecoder {
 
     }
 
-    MCU[] decode() {
+    public MCU[] decode() {
         try {
-            inFile = new FileInputStream(SourceImage);
-            inFile.read(Buffer, 0, BytesToRead);
-
+            //inFile = new FileInputStream(SourceImage);
+            //inFile.read(Buffer, 0, BytesToRead);
         } catch (Exception ex) {
         }
         MjpegParser m = new MjpegParser();
         for (int i = 0; i < 1; i++) {
             for (int x = 0; x < 3; x++)
                 previousDCs[x] = 0;
-
+        System.out.println("Entered");
             Header header = m.readJPG();
             // validate header
             if (header == null) {
