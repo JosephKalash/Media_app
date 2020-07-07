@@ -9,62 +9,56 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Mp3Decoder extends Decoder {
-     public static TrackData trackData;
+public class Mp3Decoder  {
 
-    public static TrackData getTrackData() {
-        return trackData;
-    }
+    //SoundData soundData;
 
-    public Mp3Decoder(InputStream in) {
-        super(in);
-    }
-
-    @Override
-    public void decode() throws IOException {
-            initDecoder(in);
-    }
-
-    public static void initDecoder(InputStream in) throws IOException {
+    public static SoundData init(InputStream in) throws IOException {
+        if(in == null)
+            return null;
         Buffer buffer = new Buffer(in);
 
         while (buffer.lastByte != -1) {
-            trackData = new TrackData();
-            trackData.buffer = buffer;
+            SoundData soundData = new SoundData();
+            soundData.buffer = buffer;
             try {
-                if (decodeFrame()) {
+                if (Mp3Decoder.decodeFrame(soundData)) {
 
-                    FrameHeader adjacentHeader = findNextHeader( 1);
+                    FrameHeader adjacentHeader = Mp3Decoder.findNextHeader(soundData, 1);
                     if (adjacentHeader != null) {
 
-                        adjacentHeader.unRead(trackData);
+                        adjacentHeader.unRead(soundData);
+                        return soundData;
                     }
                 }
 
-            } catch (IOException e) { e.fillInStackTrace();
+            } catch (NegativeArraySizeException e) {
+            } catch (NullPointerException e) {
+            } catch (ArrayIndexOutOfBoundsException e) {
             }
         }
+        return null;
     }
 
-    private static FrameHeader findNextHeader() {
-        return findNextHeader( Integer.MAX_VALUE);
+    private static FrameHeader findNextHeader(SoundData soundData) {
+        return Mp3Decoder.findNextHeader(soundData, Integer.MAX_VALUE);
     }
 
-    private static FrameHeader findNextHeader( int maxBytesSkipped) {
+    private static FrameHeader findNextHeader(SoundData soundData, int maxBytesSkipped) {
 
         try {
-            FrameHeader header = new FrameHeader(trackData);
+            FrameHeader header = new FrameHeader(soundData);
 
             int skipped = 0;
             while (!header.isValid()) {
-                if (trackData.buffer.lastByte == -1 || skipped >= maxBytesSkipped) {
+                if (soundData.buffer.lastByte == -1 || skipped >= maxBytesSkipped) {
                     return null;
                 }
                 skipped++;
-                trackData.buffer.in.reset();
+                soundData.buffer.in.reset();
 
-                trackData.buffer.lastByte = trackData.buffer.in.read();
-                header.set(trackData);
+                soundData.buffer.lastByte = soundData.buffer.in.read();
+                header.set(soundData);
             }
             return header;
 
@@ -75,45 +69,45 @@ public class Mp3Decoder extends Decoder {
     }
 
 
-    public static boolean decodeFrame() throws IOException {
-        if (trackData.buffer.lastByte == -1) {
+    public static boolean decodeFrame(SoundData soundData) throws IOException {
+        if (soundData.buffer.lastByte == -1) {
             return false;
         }
 
-        FrameHeader header = findNextHeader();
+        FrameHeader header = Mp3Decoder.findNextHeader(soundData);
         if (header == null) {
             return false;
         }
 
 
-        if (trackData.frequency == -1) {
-            trackData.frequency = Mp3StandardData.SAMPLING_FREQUENCY[header.samplingFrequency];
+        if (soundData.frequency == -1) {
+            soundData.frequency = Mp3StandardData.SAMPLING_FREQUENCY[header.samplingFrequency];
         }
 
-        if (trackData.stereo == -1) {
+        if (soundData.stereo == -1) {
             if (header.mode == 0b11 /* single_channel */) {
-                trackData.stereo = 0;
+                soundData.stereo = 0;
             } else {
-                trackData.stereo = 1;
+                soundData.stereo = 1;
             }
             if (header.layer == 0b01 /* layer III */) {
                 if (header.mode == 0b11 /* single_channel */) {
-                    trackData.mainData = new byte[1024];
-                    trackData.store = new float[32 * 18];
-                    trackData.v = new float[1024];
+                    soundData.mainData = new byte[1024];
+                    soundData.store = new float[32 * 18];
+                    soundData.v = new float[1024];
                 } else {
-                    trackData.mainData = new byte[2 * 1024];
-                    trackData.store = new float[2 * 32 * 18];
-                    trackData.v = new float[2 * 1024];
+                    soundData.mainData = new byte[2 * 1024];
+                    soundData.store = new float[2 * 32 * 18];
+                    soundData.v = new float[2 * 1024];
                 }
-                trackData.mainDataReader = new MainDataReader(trackData.mainData);
+                soundData.mainDataReader = new MainDataReader(soundData.mainData);
             } else {
                 if (header.mode == 0b11 /* single_channel */) {
-                    trackData.synthOffset = new int[]{64};
-                    trackData.synthBuffer = new float[1024];
+                    soundData.synthOffset = new int[]{64};
+                    soundData.synthBuffer = new float[1024];
                 } else {
-                    trackData.synthOffset = new int[]{64, 64};
-                    trackData.synthBuffer = new float[2 * 1024];
+                    soundData.synthOffset = new int[]{64, 64};
+                    soundData.synthBuffer = new float[2 * 1024];
                 }
             }
         }
@@ -122,53 +116,53 @@ public class Mp3Decoder extends Decoder {
 
         if (header.protectionBit == 0) {
 
-            read(trackData.buffer, 16);
+            read(soundData.buffer, 16);
         }
 
         if (header.layer == 0b11 /* layer I */) {
             float[] sampleDecoded = null;
             if (header.mode == 0b11 /* single_channel */) {
-                sampleDecoded = samples_I(trackData.buffer, 1, -1);
+                sampleDecoded = samples_I(soundData.buffer, 1, -1);
             } else if (header.mode == 0b0 /* stereo */ || header.mode == 0b10 /* dual_channel */) {
-                sampleDecoded = samples_I(trackData.buffer, 2, -1);
+                sampleDecoded = samples_I(soundData.buffer, 2, -1);
             } else if (header.mode == 0b01 /* intensity_stereo */) {
-                sampleDecoded = samples_I(trackData.buffer, 2, bound);
+                sampleDecoded = samples_I(soundData.buffer, 2, bound);
             }
             if (header.mode == 0b11 /* single_channel */) {
-                synth(trackData, sampleDecoded, trackData.synthOffset, trackData.synthBuffer, 1);
+                synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 1);
             } else {
-                synth(trackData, sampleDecoded, trackData.synthOffset, trackData.synthBuffer, 2);
+                synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 2);
             }
         } else if (header.layer == 0b10 /* layer II */) {
             float[] sampleDecoded = null;
             int bitrate = Mp3StandardData.BITRATE_LAYER_II[header.bitrateIndex];
             if (header.mode == 0b11 /* single_channel */) {
-                sampleDecoded = samples_II(trackData.buffer, 1, -1, bitrate, trackData.frequency);
+                sampleDecoded = samples_II(soundData.buffer, 1, -1, bitrate, soundData.frequency);
             } else if (header.mode == 0b0 /* stereo */ || header.mode == 0b10 /* dual_channel */) {
-                sampleDecoded = samples_II(trackData.buffer, 2, -1, bitrate, trackData.frequency);
+                sampleDecoded = samples_II(soundData.buffer, 2, -1, bitrate, soundData.frequency);
             } else if (header.mode == 0b01 /* intensity_stereo */) {
-                sampleDecoded = samples_II(trackData.buffer, 2, bound, bitrate, trackData.frequency);
+                sampleDecoded = samples_II(soundData.buffer, 2, bound, bitrate, soundData.frequency);
             }
             if (header.mode == 0b11 /* single_channel */) {
-                synth(trackData, sampleDecoded, trackData.synthOffset, trackData.synthBuffer, 1);
+                synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 1);
             } else {
-                synth(trackData, sampleDecoded, trackData.synthOffset, trackData.synthBuffer, 2);
+                synth(soundData, sampleDecoded, soundData.synthOffset, soundData.synthBuffer, 2);
             }
         } else if (header.layer == 0b01 /* layer III */) {
             int frameSize = (144 * Mp3StandardData.BITRATE_LAYER_III[header.bitrateIndex]) / Mp3StandardData.SAMPLING_FREQUENCY[header.samplingFrequency] + header.paddingBit;
             if (frameSize > 2000) {
                 System.err.println("Frame too large! " + frameSize);
             }
-            startDecompress(trackData.buffer, trackData.stereo == 1 ? 2 : 1, trackData.mainDataReader, frameSize, header.samplingFrequency, header.mode, header.modeExtension, trackData.store, trackData.v, trackData);
+            samples_III(soundData.buffer, soundData.stereo == 1 ? 2 : 1, soundData.mainDataReader, frameSize, header.samplingFrequency, header.mode, header.modeExtension, soundData.store, soundData.v, soundData);
         }
 
-        if (trackData.buffer.current != 0) {
-            read(trackData.buffer, 8 - trackData.buffer.current);
+        if (soundData.buffer.current != 0) {
+            read(soundData.buffer, 8 - soundData.buffer.current);
         }
         return true;
     }
 
-    private static void startDecompress(Buffer buffer, int stereo, MainDataReader mainDataReader, int frameSize, int samplingFrequency, int mode, int modeExtension, float[] store, float[] v, TrackData trackData) throws IOException {
+    private static void samples_III(Buffer buffer, int stereo, MainDataReader mainDataReader, int frameSize, int samplingFrequency, int mode, int modeExtension, float[] store, float[] v, SoundData soundData) throws IOException {
         int[] scfsi = new int[stereo * 4];
         int[] part2_3_length = new int[stereo * 2];
         int[] big_values = new int[stereo * 2];
@@ -436,8 +430,8 @@ public class Mp3Decoder extends Decoder {
             } /* end for (gr... */
         }
 
-        if(trackData.samplesBuffer == null)
-            trackData.samplesBuffer = new byte[18 * 32 * 2 * stereo * 2];
+        if(soundData.samplesBuffer == null)
+            soundData.samplesBuffer = new byte[18 * 32 * 2 * stereo * 2];
 
         for (int gr = 0; gr < 2; gr++) {
             for (int ch = 0; ch < stereo; ch++) {
@@ -841,11 +835,11 @@ public class Mp3Decoder extends Decoder {
                         samp &= 0xffff;
 
                         if (stereo > 1) {
-                            trackData.samplesBuffer[gr * 18 * 32 * 2 * 2 + ss * 32 * 2 * 2 + i * 2 * 2 + ch * 2] = (byte) samp;
-                            trackData.samplesBuffer[gr * 18 * 32 * 2 * 2 + ss * 32 * 2 * 2 + i * 2 * 2 + ch * 2 + 1] = (byte) (samp >>> 8);
+                            soundData.samplesBuffer[gr * 18 * 32 * 2 * 2 + ss * 32 * 2 * 2 + i * 2 * 2 + ch * 2] = (byte) samp;
+                            soundData.samplesBuffer[gr * 18 * 32 * 2 * 2 + ss * 32 * 2 * 2 + i * 2 * 2 + ch * 2 + 1] = (byte) (samp >>> 8);
                         } else {
-                            trackData.samplesBuffer[gr * 18 * 32 * 2 + ss * 32 * 2 + i * 2] = (byte) samp;
-                            trackData.samplesBuffer[gr * 18 * 32 * 2 + ss * 32 * 2 + i * 2 + 1] = (byte) (samp >>> 8);
+                            soundData.samplesBuffer[gr * 18 * 32 * 2 + ss * 32 * 2 + i * 2] = (byte) samp;
+                            soundData.samplesBuffer[gr * 18 * 32 * 2 + ss * 32 * 2 + i * 2 + 1] = (byte) (samp >>> 8);
                         }
                     } /* end for (i... */
                 } /* end for (ss... */
@@ -1312,7 +1306,7 @@ public class Mp3Decoder extends Decoder {
         return sampleDecoded;
     }
 
-    private static void synth(TrackData trackData, float[] samples, int[] synthOffset, float[] synthBuffer, int stereo) {
+    private static void synth(SoundData soundData, float[] samples, int[] synthOffset, float[] synthBuffer, int stereo) {
         int size = samples.length / stereo / 32;
         float[] pcm = new float[size * 32 * stereo];
         for (int ch = 0; ch < stereo; ch++) {
@@ -1335,8 +1329,8 @@ public class Mp3Decoder extends Decoder {
                 }
             }
         }
-        if(trackData.samplesBuffer == null)
-            trackData.samplesBuffer = new byte[size * 32 * stereo * 2];
+        if(soundData.samplesBuffer == null)
+            soundData.samplesBuffer = new byte[size * 32 * stereo * 2];
         for (int i = 0; i < size * 32 * stereo; i++) {
             int sample = (int) (pcm[i] * 32768);
             if (sample >= 32768) {
@@ -1344,8 +1338,8 @@ public class Mp3Decoder extends Decoder {
             } else if (sample < -32768) {
                 sample = -32768;
             }
-            trackData.samplesBuffer[i * 2] = (byte) sample;
-            trackData.samplesBuffer[i * 2 + 1] = (byte) (sample >>> 8);
+            soundData.samplesBuffer[i * 2] = (byte) sample;
+            soundData.samplesBuffer[i * 2 + 1] = (byte) (sample >>> 8);
         }
     }
 
@@ -1402,7 +1396,6 @@ public class Mp3Decoder extends Decoder {
     }
 
 
-
     private static final class FrameHeader {
 
         int sigBytes;
@@ -1416,38 +1409,38 @@ public class Mp3Decoder extends Decoder {
         int mode;
         int modeExtension;
 
-        private FrameHeader(TrackData trackData) throws IOException {
-            this.set(trackData);
+        private FrameHeader(SoundData soundData) throws IOException {
+            this.set(soundData);
         }
 
-        private void set(TrackData trackData) throws IOException {
+        private void set(SoundData soundData) throws IOException {
 
 
-            trackData.buffer.current = 0;
+            soundData.buffer.current = 0;
 
-            trackData.buffer.in.mark(4);
+            soundData.buffer.in.mark(4);
             try {
-                this.sigBytes = read(trackData.buffer, 12);
-                this.version = read(trackData.buffer, 1);
-                this.layer = read(trackData.buffer, 2);
-                this.protectionBit = read(trackData.buffer, 1);
-                this.bitrateIndex = read(trackData.buffer, 4);
-                this.samplingFrequency = read(trackData.buffer, 2);
-                this.paddingBit = read(trackData.buffer, 1);
-                this.privateBit = read(trackData.buffer, 1);
-                this.mode = read(trackData.buffer, 2);
-                this.modeExtension = read(trackData.buffer, 2);
+                this.sigBytes = read(soundData.buffer, 12);
+                this.version = read(soundData.buffer, 1);
+                this.layer = read(soundData.buffer, 2);
+                this.protectionBit = read(soundData.buffer, 1);
+                this.bitrateIndex = read(soundData.buffer, 4);
+                this.samplingFrequency = read(soundData.buffer, 2);
+                this.paddingBit = read(soundData.buffer, 1);
+                this.privateBit = read(soundData.buffer, 1);
+                this.mode = read(soundData.buffer, 2);
+                this.modeExtension = read(soundData.buffer, 2);
 
-                read(trackData.buffer, 4);
+                read(soundData.buffer, 4);
             } catch (EOFException e) {
 
                 this.sigBytes = 0;
             }
         }
 
-        private void unRead(TrackData trackData) throws IOException {
-            trackData.buffer.in.reset();
-            trackData.buffer.lastByte = this.sigBytes >>> 4;
+        private void unRead(SoundData soundData) throws IOException {
+           // soundData.buffer.in.reset();
+            soundData.buffer.lastByte = this.sigBytes >>> 4;
         }
 
         private boolean isValid() {
@@ -1481,11 +1474,11 @@ public class Mp3Decoder extends Decoder {
         }
     }
 
-    public static final class TrackData {
+    static final class SoundData {
         private Buffer buffer;
 
         int frequency = -1;
-        public int stereo = -1;
+        int stereo = -1;
 
         private int[] synthOffset;
         private float[] synthBuffer;
@@ -1496,11 +1489,7 @@ public class Mp3Decoder extends Decoder {
         private float[] store;
         private float[] v;
 
-         byte[] samplesBuffer;
-
-        public byte[] getSamplesBuffer() {
-            return samplesBuffer;
-        }
+        byte[] samplesBuffer;
     }
 
 }

@@ -1,11 +1,13 @@
 package com.example.mediaplayer.ContainerManager.Decoder.mp3Decoder;
 
 import android.media.AudioTrack;
+import android.util.Log;
 
 import com.example.mediaplayer.ContainerManager.Decoder.Decoder;
 import com.example.mediaplayer.ContainerManager.Decoder.mp3Decoder.Mp3Decoder;
 import com.example.mediaplayer.ContainerManager.Parser.WavParser.WavFileException;
 import com.example.mediaplayer.Data.Frame.mp3Frame.Mp3Data;
+import com.example.mediaplayer.MediaControl.PlaybackThread;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -14,41 +16,42 @@ import java.io.OutputStream;
 import java.util.Objects;
 
 public class Mp3AudioTrack  {
-    Mp3Decoder mp3Decoder;
+    Mp3Decoder.SoundData soundData;
     public Mp3AudioTrack(InputStream in) {
-        mp3Decoder = new Mp3Decoder(in);
         try {
-            mp3Decoder.decode();
+            soundData = Mp3Decoder.init(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(soundData == null)
+            Log.d("fuck","null");
     }
 
     public Thread decodeFullyInto(AudioTrack audioTrack) {
-        Thread thread  = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        /*Thread thread  = new Thread(() -> {*/
+        try {
+            while (!Mp3Decoder.decodeFrame(soundData))
+            {
 
-                while (true)
-                {
-                    try {
-                        if (!Mp3Decoder.decodeFrame()) break;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    audioTrack.write(Mp3Decoder.getTrackData().samplesBuffer , 0
-                            , Mp3Decoder.getTrackData().samplesBuffer.length);
 
-                }
+                    Log.d("fuck" , soundData.samplesBuffer[100] + "");
+
+
+                if(audioTrack != null )
+                    audioTrack.write(soundData.samplesBuffer , 0 , soundData.samplesBuffer.length);
+                else break;
+
             }
-        });
-        thread.start();
-        return thread;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       /* });
+        thread.start();*/
+        return null;
     }
 
     public boolean isStereo() {
-        return Mp3Decoder.getTrackData().stereo == 1;
+        return soundData.stereo == 1;
     }
-
 
 }

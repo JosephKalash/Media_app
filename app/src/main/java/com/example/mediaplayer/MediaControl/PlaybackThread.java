@@ -18,6 +18,7 @@ package com.example.mediaplayer.MediaControl;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.util.Log;
 
 import com.example.mediaplayer.ContainerManager.Decoder.mp3Decoder.Mp3AudioTrack;
 
@@ -42,38 +43,38 @@ public class PlaybackThread {
     }
 
     public void startPlayback(InputStream in ) {
-        if (mThread != null)
+        if (in == null)
             return;
         this.in = in;
 
         // Start streaming in a thread
         mShouldContinue = true;
-        mThread = new Thread(() -> {
 
                 sound = new Mp3AudioTrack(in);
                 play();
 
-        });
-        mThread.start();
     }
 
     public void stopPlayback() {
-        if (mThread == null)
+        if (decoderThread == null)
             return;
-
-        audioTrack.release();
         mShouldContinue = false;
-        mThread = null;
+        audioTrack.stop();
         decoderThread = null;
         sound = null;
+        in = null;
+        audioTrack.release();
 
     }
 
     private void play() {
-        int bufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_OUT_STEREO,
+        int bufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE,
+                AudioFormat.CHANNEL_OUT_STEREO ,
                 AudioFormat.ENCODING_PCM_16BIT);
         if (bufferSize == AudioTrack.ERROR || bufferSize == AudioTrack.ERROR_BAD_VALUE) {
+            if(sound.isStereo())
             bufferSize = SAMPLE_RATE * 2*2;
+            else bufferSize = SAMPLE_RATE * 2;
         }
 
         audioTrack = new AudioTrack(

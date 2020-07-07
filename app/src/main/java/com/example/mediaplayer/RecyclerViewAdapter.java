@@ -59,7 +59,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mediaTitle = itemView.findViewById(R.id.media_title_text_view);
             ic_more_btn = itemView.findViewById(R.id.ic_more_btn);
 
-            mediaTitle.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override

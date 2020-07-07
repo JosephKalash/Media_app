@@ -19,12 +19,15 @@ import com.example.mediaplayer.Data.Container.Container;
 import com.example.mediaplayer.Data.Container.MB3Container;
 import com.example.mediaplayer.Data.Container.WavContainer;
 import com.example.mediaplayer.Data.Container.mp4.MB4Container;
+import com.example.mediaplayer.MediaControl.PlaybackListener;
+import com.example.mediaplayer.MediaControl.PlaybackThread;
 import com.example.mediaplayer.reader.MediaFile;
 import com.example.mediaplayer.reader.StorageFilesReader;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -32,10 +35,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import com.example.mediaplayer.ContainerManager.ContainerManager;
 import com.example.mediaplayer.Data.Data;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 
@@ -61,8 +70,22 @@ public class MainActivity extends AppCompatActivity {
             if (file.getName().endsWith("wav")) {
                 mContainer = new WavContainer(stream);
             }
-            if (file.getName().endsWith("mp3")) {
-                mContainer = new MB3Container(stream);
+            if (file.getName().toLowerCase().endsWith("mp3")) {
+                Log.d("INFO" , file.getName());
+                //InputStream is = new BufferedInputStream(stream);
+                PlaybackThread play = new PlaybackThread(new PlaybackListener() {
+                    @Override
+                    public void onProgress(int progress) {
+
+                    }
+
+                    @Override
+                    public void onCompletion() {
+
+                    }
+                });
+                play.startPlayback(stream);
+                //mContainer = new MB3Container(is);
             }
             if (file.getName().endsWith("mp4")) {
                 mContainer = new MB4Container(stream);
