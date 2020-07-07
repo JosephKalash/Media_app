@@ -50,8 +50,8 @@ public class PlaybackThread {
         // Start streaming in a thread
         mShouldContinue = true;
 
-                sound = new Mp3AudioTrack(in);
-                play();
+        sound = new Mp3AudioTrack(in);
+        play();
 
     }
 
@@ -73,7 +73,7 @@ public class PlaybackThread {
                 AudioFormat.ENCODING_PCM_16BIT);
         if (bufferSize == AudioTrack.ERROR || bufferSize == AudioTrack.ERROR_BAD_VALUE) {
             if(sound.isStereo())
-            bufferSize = SAMPLE_RATE * 2*2;
+                bufferSize = SAMPLE_RATE * 2*2;
             else bufferSize = SAMPLE_RATE * 2;
         }
 
@@ -92,6 +92,7 @@ public class PlaybackThread {
                     mListener.onProgress((track.getPlaybackHeadPosition() * 1000) / SAMPLE_RATE);
                 }
             }
+
             @Override
             public void onMarkerReached(AudioTrack track) {
                 track.release();
@@ -103,7 +104,7 @@ public class PlaybackThread {
         audioTrack.setPositionNotificationPeriod(SAMPLE_RATE / 30); // 30 times per second
 
         audioTrack.play();
-            decoderThread = sound.decodeFullyInto(audioTrack);
+        decoderThread = sound.decodeFullyInto(audioTrack);
 
 
         if (!mShouldContinue) {

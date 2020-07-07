@@ -1439,7 +1439,7 @@ public class Mp3Decoder  {
         }
 
         private void unRead(SoundData soundData) throws IOException {
-           // soundData.buffer.in.reset();
+            // soundData.buffer.in.reset();
             soundData.buffer.lastByte = this.sigBytes >>> 4;
         }
 

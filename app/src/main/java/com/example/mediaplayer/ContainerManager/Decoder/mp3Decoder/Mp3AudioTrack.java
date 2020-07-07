@@ -28,26 +28,25 @@ public class Mp3AudioTrack  {
     }
 
     public Thread decodeFullyInto(AudioTrack audioTrack) {
-        /*Thread thread  = new Thread(() -> {*/
-        try {
-            while (!Mp3Decoder.decodeFrame(soundData))
+        Thread thread  = new Thread(() -> {
+
+            while (true)
             {
+                try {
+                    if (!Mp3Decoder.decodeFrame(soundData)) break;
+                    Log.i("fuck" , soundData.samplesBuffer[100] + "");
 
-
-                    Log.d("fuck" , soundData.samplesBuffer[100] + "");
-
-
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 if(audioTrack != null )
                     audioTrack.write(soundData.samplesBuffer , 0 , soundData.samplesBuffer.length);
                 else break;
 
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-       /* });
-        thread.start();*/
-        return null;
+        });
+        thread.start();
+        return thread;
     }
 
     public boolean isStereo() {

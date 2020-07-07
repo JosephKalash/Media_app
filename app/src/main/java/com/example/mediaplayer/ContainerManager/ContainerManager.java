@@ -39,20 +39,6 @@ public class ContainerManager {
         }
         else if(mContainer instanceof MB3Container){
 
-            Log.d("INFO" , "mp3Container");
-
-            PlaybackThread play = new PlaybackThread(new PlaybackListener() {
-                @Override
-                public void onProgress(int progress) {
-
-                }
-
-                @Override
-                public void onCompletion() {
-
-                }
-            });
-            play.startPlayback(mContainer.getInputStream());
         }
         else if(mContainer instanceof MB4Container){
             decoder = new MjpegDecoder(mContainer, file);
