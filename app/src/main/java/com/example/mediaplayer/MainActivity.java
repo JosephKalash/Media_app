@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -59,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     private TabLayout mTabLayout;
     private static final int REQUEST_STORAGE = 1;
+    private static PlaybackThread play;
 
-    static StorageFilesReader stReader;
+    static StorageFilesReader stReader;/*TODO FIX MEMORY LEAK*/
     private static Container mContainer;
     private static ContainerManager containerManager;
 
@@ -79,8 +81,10 @@ public class MainActivity extends AppCompatActivity {
             if (file.getName().toLowerCase().endsWith("mp3")) {
 
                 Log.d("INFO" , file.getName());
-                InputStream is = new BufferedInputStream(new FileInputStream(new File( getPathFromUri(context , file.getUri()))));
-                PlaybackThread play = new PlaybackThread(new PlaybackListener() {
+                InputStream is = new BufferedInputStream(
+                        new FileInputStream(
+                                new File(Objects.requireNonNull(getPathFromUri(context, file.getUri())))));
+                play = new PlaybackThread(new PlaybackListener() {
                     @Override
                     public void onProgress(int progress) {
 
@@ -125,6 +129,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        play.stopPlayback();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_STORAGE){
@@ -155,14 +165,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class PagerAdapter extends FragmentPagerAdapter {
+    public static class PagerAdapter extends FragmentPagerAdapter {
         public PagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
 
         @Override
+        @NonNull
         public Fragment getItem(int i) {
-            PageFragment fragment = null;
+            PageFragment fragment;
 
             if (i == 0) {
                 fragment = PageFragment.newInstance(i);
@@ -198,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public static String getPathFromUri(final Context context, final Uri uri) {
 
-        final boolean isKitKat = true;
 
         // DocumentProvider
         if (DocumentsContract.isDocumentUri(context, uri)) {
@@ -219,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                        Uri.parse("content://downloads/public_downloads"), Long.parseLong(id));
 
                 return getDataColumn(context, contentUri, null, null);
             }

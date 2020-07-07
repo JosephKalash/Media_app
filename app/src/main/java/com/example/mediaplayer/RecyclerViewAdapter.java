@@ -51,7 +51,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ImageView thumbnail;
         TextView mediaTitle;
         ImageView ic_more_btn;
-
+/*TODO MAKE INTERFACE onClickListener*/
         public FileLayoutHolder(@NonNull View itemView) {
             super(itemView);
 

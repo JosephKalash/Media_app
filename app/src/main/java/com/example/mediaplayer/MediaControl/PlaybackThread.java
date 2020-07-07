@@ -27,8 +27,7 @@ import java.io.InputStream;
 
 public class PlaybackThread {
     static final int SAMPLE_RATE = 44100;
-    private Thread mThread;
-    private boolean mShouldContinue;
+    public static boolean mShouldContinue;
     private PlaybackListener mListener;
     AudioTrack audioTrack;
     Mp3AudioTrack sound;
@@ -39,11 +38,11 @@ public class PlaybackThread {
     }
 
     public boolean playing() {
-        return mThread != null;
+        return decoderThread != null;
     }
 
     public void startPlayback(InputStream in ) {
-        if (in == null)
+        if (in == null || decoderThread != null)
             return;
         this.in = in;
 
@@ -69,7 +68,7 @@ public class PlaybackThread {
 
     private void play() {
         int bufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE,
-                AudioFormat.CHANNEL_OUT_STEREO ,
+                sound.isStereo() ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO ,
                 AudioFormat.ENCODING_PCM_16BIT);
         if (bufferSize == AudioTrack.ERROR || bufferSize == AudioTrack.ERROR_BAD_VALUE) {
             if(sound.isStereo())

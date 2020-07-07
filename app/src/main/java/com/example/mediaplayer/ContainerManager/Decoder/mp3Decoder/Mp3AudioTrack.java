@@ -30,7 +30,7 @@ public class Mp3AudioTrack  {
     public Thread decodeFullyInto(AudioTrack audioTrack) {
         Thread thread  = new Thread(() -> {
 
-            while (true)
+            while (PlaybackThread.mShouldContinue)
             {
                 try {
                     if (!Mp3Decoder.decodeFrame(soundData)) break;
@@ -39,7 +39,7 @@ public class Mp3AudioTrack  {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(audioTrack != null )
+                if(PlaybackThread.mShouldContinue && audioTrack != null )
                     audioTrack.write(soundData.samplesBuffer , 0 , soundData.samplesBuffer.length);
                 else break;
 
