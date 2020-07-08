@@ -38,7 +38,7 @@ public class PlaybackThread {
     }
 
     public boolean playing() {
-        return decoderThread != null;
+        return mShouldContinue;
     }
 
     public void startPlayback(InputStream in ) {
