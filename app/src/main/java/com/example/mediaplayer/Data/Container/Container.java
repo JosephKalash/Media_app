@@ -10,6 +10,8 @@ abstract public class Container {
         this.mInputStream = in;
     }
 
+    protected Container() {
+    }
 
 
     public InputStream getInputStream () {

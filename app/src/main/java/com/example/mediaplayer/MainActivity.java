@@ -61,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     private TabLayout mTabLayout;
     private static final int REQUEST_STORAGE = 1;
-    private static PlaybackThread play;
-
+    private static PlaybackThread playback;
     static StorageFilesReader stReader;/*TODO FIX MEMORY LEAK*/
     private static Container mContainer;
     private static ContainerManager containerManager;
@@ -92,8 +91,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
 */
+
 
     // this methods will be called from recycler view holder after clicking on an item
     public static void doActionToFile(String name, Context context) {
@@ -108,24 +107,12 @@ public class MainActivity extends AppCompatActivity {
 
             if (file.getName().toLowerCase().endsWith("mp3")) {
 
-                Log.d("INFO" , file.getName());
-                InputStream is = new BufferedInputStream(
+                InputStream in = new BufferedInputStream(
                         new FileInputStream(
                                 new File(Objects.requireNonNull(getPathFromUri(context, file.getUri())))));
-                if (play.playing())
-                    play.stopPlayback();
-                play = new PlaybackThread(new PlaybackListener() {
-                    @Override
-                    public void onProgress(int progress) {
-
-                    }
-
-                    @Override
-                    public void onCompletion() {
-
-                    }
-                });
-                play.startPlayback(is);
+                if(playback.playing())
+                    playback.stopPlayback();
+                mContainer = new MB3Container(in,playback);
             }
 
             if (file.getName().endsWith("mp4")) {
@@ -155,13 +142,25 @@ public class MainActivity extends AppCompatActivity {
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(viewPager);
+        playback = new PlaybackThread(new PlaybackListener() {
+            @Override
+            public void onProgress(int progress) {
+
+            }
+
+            @Override
+            public void onCompletion() {
+
+            }
+        });
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        play.stopPlayback();
+        if(playback.playing())
+            playback.stopPlayback();
     }
 
     @Override

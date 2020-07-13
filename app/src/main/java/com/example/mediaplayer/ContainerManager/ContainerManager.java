@@ -18,6 +18,7 @@ import com.example.mediaplayer.MediaControl.PlaybackThread;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ContainerManager {
     Container mContainer;
@@ -38,7 +39,10 @@ public class ContainerManager {
             decoder.decode();
         }
         else if(mContainer instanceof MB3Container){
+            PlaybackThread play = ((MB3Container) mContainer).getPlayback();
+            InputStream in = mContainer.getInputStream();
 
+            play.startPlayback(in);
         }
         else if(mContainer instanceof MB4Container){
             decoder = new MjpegDecoder(mContainer, file);
@@ -49,10 +53,6 @@ public class ContainerManager {
         if(mContainer instanceof WavContainer){
             parser = new WavParser(mContainer);
             parser.parse();
-        }
-        else if(mContainer instanceof MB3Container){
-            /*parser = new MB3Parser(container);
-            parser.parse();*/
         }
         else if (mContainer instanceof MB4Container){
             parser = new MB4Parser(mContainer);
