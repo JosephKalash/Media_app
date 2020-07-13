@@ -103,7 +103,7 @@ public class StorageFilesReader {
                 int size = cursor.getInt(sizeColumn);
 
                 Uri contentUri = ContentUris.withAppendedId(
-                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
 
                 // Stores column values and the contentUri in a local object
                 // that represents the media file.

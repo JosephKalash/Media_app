@@ -76,6 +76,7 @@ public class PageFragment extends Fragment {
         mRecyclerView.setNestedScrollingEnabled(false);
 
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
+
     }
 
 }

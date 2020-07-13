@@ -24,7 +24,7 @@ public class WavDecoder extends Decoder {
     }
 
     @Override
-    public void Decode() throws IOException, WavFileException {
+    public void decode() throws IOException, WavFileException {
         long [] val = getSampleBuffer();
         int number = (int) (DecodingContainer.getNumberOfChannels()*DecodingContainer.getNumberOfFrames());
         ByteBuffer = writeBytes( val,number);
