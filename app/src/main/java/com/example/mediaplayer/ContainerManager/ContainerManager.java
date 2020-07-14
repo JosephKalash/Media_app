@@ -61,6 +61,6 @@ public class ContainerManager {
     }
     public void StartManaging() throws IOException, WavFileException {
         Parse();
-        //Decode();
+        Decode();
     }
 }
