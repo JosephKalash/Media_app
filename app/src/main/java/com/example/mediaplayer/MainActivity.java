@@ -1,24 +1,26 @@
 package com.example.mediaplayer;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+
 import android.Manifest;
-import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.example.mediaplayer.ContainerManager.Parser.WavParser.WavFileException;
 import com.example.mediaplayer.Data.Container.Container;
@@ -26,9 +28,10 @@ import com.example.mediaplayer.Data.Container.MB3Container;
 import com.example.mediaplayer.Data.Container.WavContainer;
 import com.example.mediaplayer.Data.Container.mp4.MB4Container;
 import com.example.mediaplayer.MediaControl.PlaybackListener;
-import com.example.mediaplayer.MediaControl.PlaybackThread;
+import com.example.mediaplayer.MediaControl.PlaybackAudio;
 import com.example.mediaplayer.reader.MediaFile;
 import com.example.mediaplayer.reader.StorageFilesReader;
+import com.example.mediaplayer.services.OnClearFromRecentService;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.core.app.ActivityCompat;
@@ -43,14 +46,12 @@ import com.example.mediaplayer.ContainerManager.ContainerManager;
 import com.example.mediaplayer.Data.Data;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,11 +62,13 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     private TabLayout mTabLayout;
     private static final int REQUEST_STORAGE = 1;
-    private static PlaybackThread playback;
+    private static PlaybackAudio playback;
     static StorageFilesReader stReader;/*TODO FIX MEMORY LEAK*/
     private static Container mContainer;
     private static ContainerManager containerManager;
     private AudioManager mAudioManager;
+    NotificationManager notifiManager;
+    static int currentPosition;
 /*
 
     private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -106,13 +109,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (file.getName().toLowerCase().endsWith("mp3")) {
-
-                InputStream in = new BufferedInputStream(
-                        new FileInputStream(
-                                new File(Objects.requireNonNull(getPathFromUri(context, file.getUri())))));
+                currentPosition = stReader.getAudioFies().indexOf(file);
+                InputStream in = getInputStreamFromUri(context,file.getUri());
                 if(playback.playing())
-                    playback.stopPlayback();
+                    playback.stop();
                 mContainer = new MB3Container(in,playback);
+               setNotification(context,file.getName());
             }
 
             if (file.getName().endsWith("mp4")) {
@@ -142,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(viewPager);
-        playback = new PlaybackThread(new PlaybackListener() {
+        playback = new PlaybackAudio(new PlaybackListener() {
             @Override
             public void onProgress(int progress) {
 
@@ -154,13 +156,84 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //for notification
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel();
+            registerReceiver(broadcast, new IntentFilter("cha_cha"));
+            startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
+        }
     }
 
+    public void createChannel(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel(MediaNotificatioin.CHANNEL_ID,"nigga",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+
+            notifiManager = getSystemService(NotificationManager.class);
+            if(notifiManager != null)
+                notifiManager.createNotificationChannel(channel);
+        }
+    }
+    //deal with buttons on notification
+    BroadcastReceiver broadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getExtras().getString("actionname");
+            MediaFile file;
+            InputStream in;
+            switch (action){
+                case MediaNotificatioin.PREVIOUS:
+                    if(playback.playing())
+                        playback.stop();
+                    file = stReader.getAudioFies().get(currentPosition-1);
+                    setNotification(MainActivity.this,file.getName());
+                    in = getInputStreamFromUri(MainActivity.this,file.getUri());
+                    playback.previous();
+                    break;
+                case MediaNotificatioin.PLAY:
+                    if(playback.playing())
+                        playback.pause();
+                    else playback.resume();
+                    break;
+                case MediaNotificatioin.NEXT:
+                    if(playback.playing())
+                        playback.stop();
+                    file = stReader.getAudioFies().get(currentPosition+1);
+                    setNotification(MainActivity.this,file.getName());
+                    in = getInputStreamFromUri(MainActivity.this,file.getUri());
+                    playback.next();
+                    break;
+            }
+        }
+    };
+    public static void setNotification(Context context, String name){
+        MediaNotificatioin.createNotification(context,name,
+                R.drawable.ic_action_pause,currentPosition,stReader.getAudioFies().size()-1);
+    }
+    public static InputStream getInputStreamFromUri(Context context, Uri uri){
+        try {
+            return new BufferedInputStream(
+                    new FileInputStream(
+                            new File(Objects.requireNonNull(getPathFromUri(context, uri)))));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     @Override
     protected void onStop() {
         super.onStop();
         if(playback.playing())
-            playback.stopPlayback();
+            playback.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notifiManager.cancelAll();
+            unregisterReceiver(broadcast);
+        }
     }
 
     @Override

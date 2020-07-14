@@ -13,8 +13,7 @@ import com.example.mediaplayer.Data.Container.Container;
 import com.example.mediaplayer.Data.Container.MB3Container;
 import com.example.mediaplayer.Data.Container.WavContainer;
 import com.example.mediaplayer.Data.Container.mp4.MB4Container;
-import com.example.mediaplayer.MediaControl.PlaybackListener;
-import com.example.mediaplayer.MediaControl.PlaybackThread;
+import com.example.mediaplayer.MediaControl.PlaybackAudio;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class ContainerManager {
             decoder.decode();
         }
         else if(mContainer instanceof MB3Container){
-            PlaybackThread play = ((MB3Container) mContainer).getPlayback();
+            PlaybackAudio play = ((MB3Container) mContainer).getPlayback();
             InputStream in = mContainer.getInputStream();
 
             play.startPlayback(in);
@@ -61,6 +60,6 @@ public class ContainerManager {
     }
     public void StartManaging() throws IOException, WavFileException {
         Parse();
-        //Decode();
+        Decode();
     }
 }

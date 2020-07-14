@@ -25,7 +25,7 @@ import com.example.mediaplayer.ContainerManager.Decoder.mp3Decoder.Mp3AudioTrack
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PlaybackThread {
+public class PlaybackAudio implements MediaController{
     static final int SAMPLE_RATE = 44100;
     public static boolean mShouldContinue;
     private PlaybackListener mListener;
@@ -33,7 +33,7 @@ public class PlaybackThread {
     Mp3AudioTrack sound;
     InputStream in;
     Thread decoderThread;
-    public PlaybackThread(PlaybackListener listener) {
+    public PlaybackAudio(PlaybackListener listener) {
         mListener = listener;
     }
 
@@ -53,8 +53,8 @@ public class PlaybackThread {
         play();
 
     }
-
-    public void stopPlayback() {
+    @Override
+    public void stop() {
         if (decoderThread == null)
             return;
         mShouldContinue = false;
@@ -65,8 +65,9 @@ public class PlaybackThread {
         audioTrack.release();
 
     }
+    @Override
+    public void play() {
 
-    private void play() {
         int bufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE,
                 sound.isStereo() ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO ,
                 AudioFormat.ENCODING_PCM_16BIT);
@@ -109,6 +110,41 @@ public class PlaybackThread {
         if (!mShouldContinue) {
             audioTrack.release();
         }
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void seek() {
+
+    }
+
+    @Override
+    public void reverse() {
+
+    }
+
+    @Override
+    public void speed() {
+
+    }
+
+    @Override
+    public void previous() {
+
+    }
+
+    @Override
+    public void next() {
+
+    }
+
+    @Override
+    public void resume() {
 
     }
 }
