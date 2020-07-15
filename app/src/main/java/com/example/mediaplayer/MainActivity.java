@@ -187,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
                     if(playback.playing())
                         playback.stop();
                     file = stReader.getAudioFies().get(currentPosition-1);
+                    currentPosition-=1;
+                    currentFileName = file.getName();
                     setNotification(MainActivity.this,file.getName(),R.drawable.pause_notifi);
                     in = getInputStreamFromUri(MainActivity.this,file.getUri());
                     playback.previous(in);
@@ -205,6 +207,8 @@ public class MainActivity extends AppCompatActivity {
                     if(playback.playing())
                         playback.stop();
                     file = stReader.getAudioFies().get(currentPosition+1);
+                    currentPosition+=1;
+                    currentFileName = file.getName();
                     setNotification(MainActivity.this,file.getName(),R.drawable.pause_notifi);
                     in = getInputStreamFromUri(MainActivity.this,file.getUri());
                     playback.next(in);
@@ -213,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     public static void setNotification(Context context, String name,int playButton){
-        MediaNotificatioin.createNotification(context,name,
+        MediaNotificatioin.createNotification(context,name.replace(".mp3",""),
                 playButton,currentPosition,stReader.getAudioFies().size()-1);
     }
     public static InputStream getInputStreamFromUri(Context context, Uri uri){

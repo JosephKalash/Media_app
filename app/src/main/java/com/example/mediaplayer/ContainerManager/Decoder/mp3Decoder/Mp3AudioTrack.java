@@ -27,7 +27,6 @@ public class Mp3AudioTrack  {
             {
                 try {
                     if (!Mp3Decoder.decodeFrame(soundData)) break;
-                    Log.i("fuck" , soundData.samplesBuffer[100] + "");
 
                 } catch (IOException e) {
                     e.printStackTrace();
