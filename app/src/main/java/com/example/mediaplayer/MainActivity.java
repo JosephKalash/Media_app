@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private AudioManager mAudioManager;
     NotificationManager notifiManager;
     static int currentPosition;
+    static String currentFileName;
 /*
 
     private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     // this methods will be called from recycler view holder after clicking on an item
     public static void doActionToFile(String name, Context context) {
         MediaFile file = stReader.getFileByName(name);
-
+        currentFileName = file.getName();
         ContentResolver resolver = context.getContentResolver();
         try (InputStream stream = resolver.openInputStream(file.getUri())) {
 
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 if(playback.playing())
                     playback.stop();
                 mContainer = new MB3Container(in,playback);
-               setNotification(context,file.getName());
+               setNotification(context,currentFileName,R.drawable.pause_notifi);
             }
 
             if (file.getName().endsWith("mp4")) {
@@ -159,15 +160,15 @@ public class MainActivity extends AppCompatActivity {
         //for notification
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
-            registerReceiver(broadcast, new IntentFilter("cha_cha"));
+            registerReceiver(broadcast, new IntentFilter("TRACKS_TRACKS"));
             startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
         }
     }
 
     public void createChannel(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel(MediaNotificatioin.CHANNEL_ID,"nigga",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(MediaNotificatioin.CHANNEL_ID,"track",
+                    NotificationManager.IMPORTANCE_LOW);
 
             notifiManager = getSystemService(NotificationManager.class);
             if(notifiManager != null)
@@ -186,29 +187,34 @@ public class MainActivity extends AppCompatActivity {
                     if(playback.playing())
                         playback.stop();
                     file = stReader.getAudioFies().get(currentPosition-1);
-                    setNotification(MainActivity.this,file.getName());
+                    setNotification(MainActivity.this,file.getName(),R.drawable.pause_notifi);
                     in = getInputStreamFromUri(MainActivity.this,file.getUri());
-                    playback.previous();
+                    playback.previous(in);
                     break;
                 case MediaNotificatioin.PLAY:
-                    if(playback.playing())
+                    if(playback.playing()) {
+                        setNotification(MainActivity.this,currentFileName,R.drawable.play_notifi);
                         playback.pause();
-                    else playback.resume();
+                    }
+                    else{
+                        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi);
+                        playback.resume();
+                    }
                     break;
                 case MediaNotificatioin.NEXT:
                     if(playback.playing())
                         playback.stop();
                     file = stReader.getAudioFies().get(currentPosition+1);
-                    setNotification(MainActivity.this,file.getName());
+                    setNotification(MainActivity.this,file.getName(),R.drawable.pause_notifi);
                     in = getInputStreamFromUri(MainActivity.this,file.getUri());
-                    playback.next();
+                    playback.next(in);
                     break;
             }
         }
     };
-    public static void setNotification(Context context, String name){
+    public static void setNotification(Context context, String name,int playButton){
         MediaNotificatioin.createNotification(context,name,
-                R.drawable.ic_action_pause,currentPosition,stReader.getAudioFies().size()-1);
+                playButton,currentPosition,stReader.getAudioFies().size()-1);
     }
     public static InputStream getInputStreamFromUri(Context context, Uri uri){
         try {
@@ -223,13 +229,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(playback.playing())
-            playback.stop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(playback.playing())
+            playback.stop();
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notifiManager.cancelAll();
             unregisterReceiver(broadcast);

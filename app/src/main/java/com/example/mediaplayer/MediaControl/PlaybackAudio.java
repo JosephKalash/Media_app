@@ -106,16 +106,17 @@ public class PlaybackAudio implements MediaController{
         audioTrack.play();
         decoderThread = sound.decodeFullyInto(audioTrack);
 
-
-        if (!mShouldContinue) {
-            audioTrack.release();
-        }
-
     }
 
     @Override
     public void pause() {
-
+        if (decoderThread == null)
+            return;
+        mShouldContinue = false;
+        audioTrack.stop();
+        decoderThread = null;
+        sound = null;
+        audioTrack.release();
     }
 
     @Override
@@ -134,17 +135,17 @@ public class PlaybackAudio implements MediaController{
     }
 
     @Override
-    public void previous() {
-
+    public void previous(InputStream in) {
+        startPlayback(in);
     }
 
     @Override
-    public void next() {
-
+    public void next(InputStream in) {
+        startPlayback(in);
     }
 
     @Override
     public void resume() {
-
+        startPlayback(this.in);
     }
 }

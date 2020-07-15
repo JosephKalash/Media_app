@@ -38,16 +38,15 @@ public class MediaNotificatioin {
                 drw_previous = 0;
 
             }else {
-                Intent previousIntent = new Intent(context , NotificationActionService.class).setAction(PREVIOUS);
-                pIPrevious = PendingIntent.getBroadcast(context, 0, previousIntent,
+                Intent intentPrevious = new Intent(context , NotificationActionService.class).setAction(PREVIOUS);
+                pIPrevious = PendingIntent.getBroadcast(context, 0, intentPrevious,
                         PendingIntent.FLAG_UPDATE_CURRENT);
-                drw_previous = R.drawable.ic_backward;
+                drw_previous = R.drawable.previous_notifi;
             }
 
             Intent playIntent = new Intent(context , NotificationActionService.class).setAction(PLAY);
             PendingIntent pIPlay = PendingIntent.getBroadcast(context, 0, playIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-            int drw_play = R.drawable.ic_play;
 
             PendingIntent pINext ;
             int drw_next;
@@ -59,18 +58,18 @@ public class MediaNotificatioin {
                 Intent nextIntent = new Intent(context , NotificationActionService.class).setAction(NEXT);
                 pINext = PendingIntent.getBroadcast(context, 0, nextIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
-                drw_next = R.drawable.ic_forward;
+                drw_next = R.drawable.next_notifi;
             }
 
             notification = new NotificationCompat.Builder(context,CHANNEL_ID)
                     .setLargeIcon(icon)
-                    .setSmallIcon(R.drawable.album2)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setSmallIcon(R.drawable.music_notifi)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setShowWhen(false)
                     .setOnlyAlertOnce(true)
                     .setContentTitle(name)
                     .addAction(drw_previous,"previous" ,pIPrevious)
-                    .addAction(drw_play,"play",pIPlay)
+                    .addAction(playButton,"play",pIPlay)
                     .addAction(drw_next,"next",pINext)
                     .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0 , 1 , 2)

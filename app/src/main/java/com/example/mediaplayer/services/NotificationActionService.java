@@ -7,7 +7,7 @@ import android.content.Intent;
 public class NotificationActionService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        onReceive(context,new Intent("cha_cha")
-        .putExtra("actionname",intent));
+        context.sendBroadcast(new Intent("TRACKS_TRACKS")
+        .putExtra("actionname",intent.getAction()));
     }
 }
