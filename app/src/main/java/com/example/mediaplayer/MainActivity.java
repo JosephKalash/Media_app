@@ -14,19 +14,21 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.view.View;
+import android.view.WindowManager;
 
 import com.example.mediaplayer.ContainerManager.Parser.WavParser.WavFileException;
 import com.example.mediaplayer.Data.Container.Container;
 import com.example.mediaplayer.Data.Container.MB3Container;
 import com.example.mediaplayer.Data.Container.WavContainer;
 import com.example.mediaplayer.Data.Container.mp4.MB4Container;
+import com.example.mediaplayer.MediaControl.AudioPlayerFragment;
 import com.example.mediaplayer.MediaControl.PlaybackListener;
 import com.example.mediaplayer.MediaControl.PlaybackAudio;
 import com.example.mediaplayer.reader.MediaFile;
@@ -36,7 +38,8 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -51,25 +54,25 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.OnClickFileListener {
     Data data;
     List<String> Format;
     ViewPager viewPager;
     private TabLayout mTabLayout;
     private static final int REQUEST_STORAGE = 1;
     private static PlaybackAudio playback;
-    static StorageFilesReader stReader;/*TODO FIX MEMORY LEAK*/
+    static StorageFilesReader stReader;
     private static Container mContainer;
     private static ContainerManager containerManager;
     private AudioManager mAudioManager;
     NotificationManager notifiManager;
     static int currentPosition;
     static String currentFileName;
+
 /*
 
     private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -97,12 +100,11 @@ public class MainActivity extends AppCompatActivity {
     };
 */
 
-
     // this methods will be called from recycler view holder after clicking on an item
-    public static void doActionToFile(String name, Context context) {
-        MediaFile file = stReader.getFileByName(name);
+    @Override
+    public void onClick(MediaFile file) {
         currentFileName = file.getName();
-        ContentResolver resolver = context.getContentResolver();
+        ContentResolver resolver = getContentResolver();
         try (InputStream stream = resolver.openInputStream(file.getUri())) {
 
             if (file.getName().endsWith("wav")) {
@@ -111,11 +113,22 @@ public class MainActivity extends AppCompatActivity {
 
             if (file.getName().toLowerCase().endsWith("mp3")) {
                 currentPosition = stReader.getAudioFies().indexOf(file);
-                InputStream in = getInputStreamFromUri(context,file.getUri());
+                InputStream in = getInputStreamFromUri(this,file.getUri());
                 if(playback.playing())
                     playback.stop();
                 mContainer = new MB3Container(in,playback);
-               setNotification(context,currentFileName,R.drawable.pause_notifi);
+
+                setNotification(this,currentFileName,R.drawable.pause_notifi , stReader.getAudioFies().size()-1);
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragment_container, AudioPlayerFragment.newInstance())
+                        .addToBackStack(null)
+                        .commit();
+                findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().hide();
+                }
             }
 
             if (file.getName().endsWith("mp4")) {
@@ -131,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
@@ -140,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         checkStorageAccessPermission();
 
         viewPager = findViewById(R.id.pager);
+        viewPager.setId(R.id.pager);
         mTabLayout = findViewById(R.id.tab_layout);
 
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager());
@@ -163,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(broadcast, new IntentFilter("TRACKS_TRACKS"));
             startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
         }
+
     }
 
     public void createChannel(){
@@ -180,46 +194,55 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getExtras().getString("actionname");
-            MediaFile file;
-            InputStream in;
             switch (action){
                 case MediaNotificatioin.PREVIOUS:
-                    if(playback.playing())
-                        playback.stop();
-                    file = stReader.getAudioFies().get(currentPosition-1);
-                    currentPosition-=1;
-                    currentFileName = file.getName();
-                    setNotification(MainActivity.this,file.getName(),R.drawable.pause_notifi);
-                    in = getInputStreamFromUri(MainActivity.this,file.getUri());
-                    playback.previous(in);
+                    playPreviousSong();
                     break;
                 case MediaNotificatioin.PLAY:
                     if(playback.playing()) {
-                        setNotification(MainActivity.this,currentFileName,R.drawable.play_notifi);
+                        setNotification(MainActivity.this,currentFileName,R.drawable.play_notifi
+                                , stReader.getAudioFies().size()-1);
                         playback.pause();
                     }
                     else{
-                        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi);
+                        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi
+                                , stReader.getAudioFies().size()-1);
                         playback.resume();
                     }
                     break;
                 case MediaNotificatioin.NEXT:
-                    if(playback.playing())
-                        playback.stop();
-                    file = stReader.getAudioFies().get(currentPosition+1);
-                    currentPosition+=1;
-                    currentFileName = file.getName();
-                    setNotification(MainActivity.this,file.getName(),R.drawable.pause_notifi);
-                    in = getInputStreamFromUri(MainActivity.this,file.getUri());
-                    playback.next(in);
+                    playNextSong();
                     break;
             }
         }
     };
-    public static void setNotification(Context context, String name,int playButton){
-        MediaNotificatioin.createNotification(context,name.replace(".mp3",""),
-                playButton,currentPosition,stReader.getAudioFies().size()-1);
+    public void playNextSong(){
+        if(playback.playing())
+            playback.stop();
+        MediaFile file = stReader.getAudioFies().get(currentPosition-1);
+        currentPosition-=1;
+        currentFileName = file.getName();
+        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi ,stReader.getAudioFies().size()-1);
+       InputStream in = getInputStreamFromUri(MainActivity.this,file.getUri());
+        playback.next(in);
+
     }
+    public void playPreviousSong(){
+        if(playback.playing())
+            playback.stop();
+        MediaFile file = stReader.getAudioFies().get(currentPosition+1);
+        currentPosition+=1;
+        currentFileName = file.getName();
+        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi,stReader.getAudioFies().size()-1);
+        InputStream in = getInputStreamFromUri(MainActivity.this,file.getUri());
+        playback.previous(in);
+    }
+
+    public static void setNotification(Context context, String name,int playButton , int size){
+        MediaNotificatioin.createNotification(context,name.replace(".mp3",""),
+                playButton,currentPosition,size);
+    }
+
     public static InputStream getInputStreamFromUri(Context context, Uri uri){
         try {
             return new BufferedInputStream(
@@ -230,9 +253,15 @@ public class MainActivity extends AppCompatActivity {
         }
         return null;
     }
+
     @Override
-    protected void onStop() {
-        super.onStop();
+    public void onBackPressed() {
+        super.onBackPressed();
+        findViewById(R.id.fragment_container).setVisibility(View.INVISIBLE);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().show();
+        }
     }
 
     @Override
@@ -277,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static class PagerAdapter extends FragmentPagerAdapter {
+    public class PagerAdapter extends FragmentPagerAdapter {
         public PagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
@@ -289,12 +318,15 @@ public class MainActivity extends AppCompatActivity {
 
             if (i == 0) {
                 fragment = PageFragment.newInstance(i);
+                fragment.setOnClickListener(MainActivity.this);
             }
             else if (i == 1) {
                 fragment = PageFragment.newInstance(i);
+                fragment.setOnClickListener(MainActivity.this);
             }
             else {
                 fragment = PageFragment.newInstance(i);
+                fragment.setOnClickListener(MainActivity.this);
             }
 
             return fragment;

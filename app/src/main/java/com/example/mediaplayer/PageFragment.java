@@ -1,5 +1,6 @@
 package com.example.mediaplayer;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +27,7 @@ public class PageFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mRecyclerViewAdapter;
     private ArrayList<MediaFile> mMediaFiles;
-
+    private RecyclerViewAdapter.OnClickFileListener mOnClick;
     public static PageFragment newInstance(int index) {
         PageFragment fragment = new PageFragment();
         Bundle args = new Bundle();
@@ -35,7 +36,9 @@ public class PageFragment extends Fragment {
 
         return fragment;
     }
-
+    public void setOnClickListener(RecyclerViewAdapter.OnClickFileListener onClick){
+        mOnClick = onClick;
+    }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -52,14 +55,13 @@ public class PageFragment extends Fragment {
         if (pageNumber == 0) {
 
             mMediaFiles = stReader.getAudioFies();
-            mRecyclerViewAdapter = new RecyclerViewAdapter(mMediaFiles, getActivity(),
-                    R.drawable.ic_music);
+            mRecyclerViewAdapter = new RecyclerViewAdapter(mOnClick , mMediaFiles, R.drawable.ic_music);
+
         }
         if (pageNumber == 1) {
 
             mMediaFiles = stReader.getVideoFies();
-            mRecyclerViewAdapter = new RecyclerViewAdapter(mMediaFiles, getActivity(),
-                    R.drawable.ic_video);
+            mRecyclerViewAdapter = new RecyclerViewAdapter(mOnClick , mMediaFiles, R.drawable.ic_video);
         }
         else {
             mMediaFiles = stReader.getAudioFies();

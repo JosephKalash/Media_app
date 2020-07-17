@@ -113,10 +113,7 @@ public class PlaybackAudio implements MediaController{
         if (decoderThread == null)
             return;
         mShouldContinue = false;
-        audioTrack.stop();
         decoderThread = null;
-        sound = null;
-        audioTrack.release();
     }
 
     @Override
