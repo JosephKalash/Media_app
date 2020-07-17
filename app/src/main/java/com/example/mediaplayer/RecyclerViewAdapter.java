@@ -17,14 +17,13 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
     private List<MediaFile> mediaFiles;
     int mImageResourceId;
-
-    RecyclerViewAdapter(List<MediaFile> mediaFiles , Context mContext, int thumbnailImage){
-        this.mContext = mContext;
+    private OnClickFileListener mOnClick;
+    RecyclerViewAdapter(OnClickFileListener onClick,List<MediaFile> mediaFiles , int thumbnailImage){
         this.mediaFiles = mediaFiles;
         mImageResourceId = thumbnailImage;
+        mOnClick = onClick;
     }
 
     @NonNull
@@ -37,7 +36,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((FileLayoutHolder)holder).mediaTitle.setText(mediaFiles.get(position).getName());
+        ((FileLayoutHolder)holder).mediaTitle.setText(mediaFiles.get(mediaFiles.size() - 1 -position).getName());
         ((FileLayoutHolder)holder).thumbnail.setImageResource(mImageResourceId);
     }
 
@@ -46,6 +45,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mediaFiles.size();
     }
 
+    interface OnClickFileListener{
+        public void onClick(MediaFile file);
+    }
     class FileLayoutHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         ImageView thumbnail;
@@ -64,8 +66,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @Override
         public void onClick(View v) {
-            String title = mediaTitle.getText().toString();
-            MainActivity.doActionToFile(title, mContext);
+            mOnClick.onClick(mediaFiles.get(mediaFiles.size() -1 - getAdapterPosition()));
         }
     }
 
