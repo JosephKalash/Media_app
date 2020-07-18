@@ -9,7 +9,7 @@
         android:id="@+id/tb_love"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_margin="@dimen/space16"
         android:textOff=""
@@ -26,6 +26,7 @@
         android:weightSum="5">
         <ImageButton
             android:layout_weight="1"
+            android:id="@+id/repeat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -33,6 +34,7 @@
             android:background="@null"/>
         <ImageButton
             android:layout_weight="1"
+            android:id="@+id/previous"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -40,6 +42,7 @@
             android:background="@null"/>
         <ImageButton
             android:layout_weight="1"
+            android:id="@+id/play"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -57,6 +60,7 @@
 
         <ImageButton
             android:layout_weight="1"
+            android:id="@+id/shuffle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -73,33 +77,35 @@
             android:id="@+id/tv_current_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:text="2:01"
+            android:text="@string/_0_00"
             android:textSize="14sp"
             android:textColor="@color/colorTextGrey"/>
         <TextView
             android:id="@+id/tv_full_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:text="3:47"
             android:textSize="14sp"
             android:textColor="@color/colorTextGrey" />
-        <ProgressBar
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/time_seek_bar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="@dimen/space8"
-            android:layout_toLeftOf="@id/tv_full_time"
-            android:layout_toRightOf="@id/tv_current_time"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/space16"
             android:layout_marginRight="@dimen/space16"
-            android:layout_centerVertical="true"
-            android:progressBackgroundTint="#E9E9E9"
-            android:progress="50"
+            android:layout_toStartOf="@id/tv_full_time"
+            android:layout_toEndOf="@id/tv_current_time"
             android:indeterminate="false"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:progressDrawable="@drawable/progress_bar"/>
+            android:progress="50"
+            android:progressBackgroundTint="#E9E9E9"
+            android:progressDrawable="@drawable/progress_bar" />
     </RelativeLayout>
     <TextView
         android:id="@+id/tv_artist"
@@ -107,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/rl_progress"
         android:layout_centerHorizontal="true"
-        android:text="by From First to Last "
+        android:text="@string/unknown"
         android:textSize="14sp"
         android:textColor="@color/colorTextGrey" />
     <TextView
@@ -132,10 +138,11 @@
         android:layout_marginTop="@dimen/space16"
         android:layout_marginBottom="@dimen/space16"
         android:src="@drawable/album2"
-        android:id="@+id/iv_cover"
+        android:id="@+id/cover"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        />
     <!--</androidx.viewpager.widget.ViewPager>-->
 
 </RelativeLayout>

@@ -1,23 +1,37 @@
 package com.example.mediaplayer.MediaControl;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mediaplayer.MainActivity;
 import com.example.mediaplayer.R;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 
-public class AudioPlayerFragment extends Fragment {
+public class AudioPlayerFragment extends Fragment implements Runnable{
     private ImageButton nextButton;
+    private ImageButton playButton;
+    private ImageButton previousButton;
+    private ImageButton shuffleButton;
+    private ImageButton repeatButton;
+    private SeekBar timeProgress;
+    private TextView fullDuration;
+    private TextView currentDuration;
+    private Thread timeThread;
 
     public AudioPlayerFragment(){}
 
@@ -29,6 +43,14 @@ public class AudioPlayerFragment extends Fragment {
         View view = inflater.inflate(R.layout.audio_control_layout, container, false);
 
         nextButton = view.findViewById(R.id.next);
+        playButton = view.findViewById(R.id.play);
+        previousButton = view.findViewById(R.id.previous);
+        shuffleButton = view.findViewById(R.id.shuffle);
+        repeatButton = view.findViewById(R.id.repeat);
+        timeProgress = view.findViewById(R.id.time_seek_bar);
+        fullDuration = view.findViewById(R.id.tv_full_time);
+        currentDuration = view.findViewById(R.id.tv_current_time);
+
         return view;
     }
 
@@ -36,7 +58,68 @@ public class AudioPlayerFragment extends Fragment {
     public void onStart() {
         super.onStart();
         nextButton.setOnClickListener(v -> {
+            MainActivity.playNextSong(getContext());
+            timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
+        });
+
+        playButton.setOnClickListener(v -> {
+            MainActivity.playSong(getContext());
+        });
+
+        previousButton.setOnClickListener(v -> {
+            MainActivity.playPreviousSong(getContext());
+            timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
+        });
+
+        shuffleButton.setOnClickListener(v -> {
             Toast.makeText(getContext(),"hello motherfuck",Toast.LENGTH_SHORT).show();
         });
+
+        repeatButton.setOnClickListener(v -> {
+            Toast.makeText(getContext(),"hello motherfuck",Toast.LENGTH_SHORT).show();
+        });
+
+        @SuppressLint("DefaultLocale") String time = String.format("%d:%d",
+                TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(MainActivity.getCurrentFileDuration())),
+                TimeUnit.MILLISECONDS.toSeconds(Long.parseLong(MainActivity.getCurrentFileDuration())) -
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(MainActivity.getCurrentFileDuration())))
+        );
+        fullDuration.setText(time);
+
+        timeProgress.setEnabled(true);
+        timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
+        timeThread = new Thread(this);
+        timeThread.start();
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        timeThread.interrupt();
+        timeThread = null;
+    }
+
+    @Override
+    public void run() {
+        AtomicInteger currentDur = new AtomicInteger();
+        int fullDur = Integer.parseInt(MainActivity.getCurrentFileDuration());
+
+        try {
+            while (currentDur.get() <= fullDur && !Thread.currentThread().isInterrupted()){
+                getActivity().runOnUiThread(() -> {
+
+                    timeProgress.setProgress(currentDur.getAndIncrement() * 1000);
+                    @SuppressLint("DefaultLocale") String time = String.format("%d:%d",
+                            TimeUnit.MILLISECONDS.toMinutes(currentDur.get()),
+                            TimeUnit.MILLISECONDS.toSeconds(currentDur.get()) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentDur.get()))
+                    );
+                    currentDuration.setText(time);
+                });
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException ignored) {
+        }
+    }
+
 }

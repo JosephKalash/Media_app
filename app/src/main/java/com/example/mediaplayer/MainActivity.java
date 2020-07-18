@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.view.View;
-import android.view.WindowManager;
 
 import com.example.mediaplayer.ContainerManager.Parser.WavParser.WavFileException;
 import com.example.mediaplayer.Data.Container.Container;
@@ -38,8 +38,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -69,10 +67,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private static Container mContainer;
     private static ContainerManager containerManager;
     private AudioManager mAudioManager;
-    NotificationManager notifiManager;
-    static int currentPosition;
+    private NotificationManager notifiManager;
+    static int currentFilePosition;
     static String currentFileName;
-
+    static String currentFileDuration;
 /*
 
     private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -101,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 */
 
     // this methods will be called from recycler view holder after clicking on an item
+
     @Override
     public void onClick(MediaFile file) {
         currentFileName = file.getName();
@@ -112,14 +111,17 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             }
 
             if (file.getName().toLowerCase().endsWith("mp3")) {
-                currentPosition = stReader.getAudioFies().indexOf(file);
+                currentFilePosition = stReader.getAudioFies().indexOf(file);
                 InputStream in = getInputStreamFromUri(this,file.getUri());
                 if(playback.playing())
                     playback.stop();
                 mContainer = new MB3Container(in,playback);
 
+                currentFileDuration = getFileDuration(this , file.getUri());
+
                 setNotification(this,currentFileName,R.drawable.pause_notifi , stReader.getAudioFies().size()-1);
 
+                //display player
                 getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.fragment_container, AudioPlayerFragment.newInstance())
@@ -141,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             e.printStackTrace();
         }
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -189,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 notifiManager.createNotificationChannel(channel);
         }
     }
+
     //deal with buttons on notification
     BroadcastReceiver broadcast = new BroadcastReceiver() {
         @Override
@@ -196,51 +198,67 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             String action = intent.getExtras().getString("actionname");
             switch (action){
                 case MediaNotificatioin.PREVIOUS:
-                    playPreviousSong();
+                    playPreviousSong(MainActivity.this);
                     break;
                 case MediaNotificatioin.PLAY:
-                    if(playback.playing()) {
-                        setNotification(MainActivity.this,currentFileName,R.drawable.play_notifi
-                                , stReader.getAudioFies().size()-1);
-                        playback.pause();
-                    }
-                    else{
-                        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi
-                                , stReader.getAudioFies().size()-1);
-                        playback.resume();
-                    }
+                    playSong(MainActivity.this);
                     break;
                 case MediaNotificatioin.NEXT:
-                    playNextSong();
+                    playNextSong(MainActivity.this);
                     break;
             }
         }
     };
-    public void playNextSong(){
+    public static void playNextSong(Context context){
         if(playback.playing())
             playback.stop();
-        MediaFile file = stReader.getAudioFies().get(currentPosition-1);
-        currentPosition-=1;
+
+        MediaFile file = stReader.getAudioFies().get(currentFilePosition -1);
+
+        currentFilePosition -=1;
         currentFileName = file.getName();
-        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi ,stReader.getAudioFies().size()-1);
-       InputStream in = getInputStreamFromUri(MainActivity.this,file.getUri());
+
+        setNotification(context,currentFileName,R.drawable.pause_notifi ,stReader.getAudioFies().size()-1);
+       InputStream in = getInputStreamFromUri(context,file.getUri());
+       currentFileDuration = getFileDuration(context , file.getUri());
         playback.next(in);
 
     }
-    public void playPreviousSong(){
+    public static void playPreviousSong(Context context){
+
         if(playback.playing())
             playback.stop();
-        MediaFile file = stReader.getAudioFies().get(currentPosition+1);
-        currentPosition+=1;
+        MediaFile file = stReader.getAudioFies().get(currentFilePosition +1);
+        currentFilePosition +=1;
         currentFileName = file.getName();
-        setNotification(MainActivity.this,currentFileName,R.drawable.pause_notifi,stReader.getAudioFies().size()-1);
-        InputStream in = getInputStreamFromUri(MainActivity.this,file.getUri());
+        setNotification(context,currentFileName,R.drawable.pause_notifi,stReader.getAudioFies().size()-1);
+        InputStream in = getInputStreamFromUri(context,file.getUri());
+        currentFileDuration = getFileDuration(context , file.getUri());
+
         playback.previous(in);
+    }
+    public static void playSong(Context context){
+        if(playback.playing()) {
+            setNotification(context,currentFileName,R.drawable.play_notifi
+                    , stReader.getAudioFies().size()-1);
+            playback.pause();
+        }
+        else{
+            setNotification(context,currentFileName,R.drawable.pause_notifi
+                    , stReader.getAudioFies().size()-1);
+            playback.resume();
+        }
+    }
+
+    public static String getFileDuration(Context context , Uri uri){
+        MediaMetadataRetriever metaData = new MediaMetadataRetriever();
+        metaData.setDataSource(context,uri);
+        return metaData.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
     }
 
     public static void setNotification(Context context, String name,int playButton , int size){
         MediaNotificatioin.createNotification(context,name.replace(".mp3",""),
-                playButton,currentPosition,size);
+                playButton, currentFilePosition,size);
     }
 
     public static InputStream getInputStreamFromUri(Context context, Uri uri){
@@ -259,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         super.onBackPressed();
         findViewById(R.id.fragment_container).setVisibility(View.INVISIBLE);
 
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null && !getSupportActionBar().isShowing()) {
             getSupportActionBar().show();
         }
     }
@@ -307,10 +325,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     }
 
     public class PagerAdapter extends FragmentPagerAdapter {
+
         public PagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
-
         @Override
         @NonNull
         public Fragment getItem(int i) {
@@ -350,6 +368,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             }
             return "";
         }
+
+
     }
     public static String getPathFromUri(final Context context, final Uri uri) {
 
@@ -365,8 +385,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 if ("primary".equalsIgnoreCase(type)) {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
-
-                // TODO handle non-primary volumes
             }
             // DownloadsProvider
             else if (isDownloadsDocument(uri)) {
@@ -416,7 +434,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
         return null;
     }
-
     public static String getDataColumn(Context context, Uri uri, String selection,
                                        String[] selectionArgs) {
 
@@ -473,4 +490,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
+    public static String getCurrentFileDuration() {
+        return currentFileDuration;
+    }
 }
