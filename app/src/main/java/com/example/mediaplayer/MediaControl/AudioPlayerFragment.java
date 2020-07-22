@@ -31,6 +31,7 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
     private SeekBar timeProgress;
     private TextView fullDuration;
     private TextView currentDuration;
+    private TextView songName;
     private Thread timeThread;
 
     public AudioPlayerFragment(){}
@@ -50,6 +51,7 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         timeProgress = view.findViewById(R.id.time_seek_bar);
         fullDuration = view.findViewById(R.id.tv_full_time);
         currentDuration = view.findViewById(R.id.tv_current_time);
+        songName = view.findViewById(R.id.tv_song);
 
         return view;
     }
@@ -79,11 +81,9 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
             Toast.makeText(getContext(),"hello motherfuck",Toast.LENGTH_SHORT).show();
         });
 
-        @SuppressLint("DefaultLocale") String time = String.format("%d:%d",
-                TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(MainActivity.getCurrentFileDuration())),
-                TimeUnit.MILLISECONDS.toSeconds(Long.parseLong(MainActivity.getCurrentFileDuration())) -
-                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(MainActivity.getCurrentFileDuration())))
-        );
+        songName.setText(MainActivity.getCurrentFileName());
+
+       String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
         fullDuration.setText(time);
 
         timeProgress.setEnabled(true);
@@ -105,21 +105,24 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         int fullDur = Integer.parseInt(MainActivity.getCurrentFileDuration());
 
         try {
-            while (currentDur.get() <= fullDur && !Thread.currentThread().isInterrupted()){
+            while (currentDur.get() <= fullDur && !Thread.currentThread().isInterrupted() && MainActivity.shouldPlay()){
                 getActivity().runOnUiThread(() -> {
 
                     timeProgress.setProgress(currentDur.getAndIncrement() * 1000);
-                    @SuppressLint("DefaultLocale") String time = String.format("%d:%d",
-                            TimeUnit.MILLISECONDS.toMinutes(currentDur.get()),
-                            TimeUnit.MILLISECONDS.toSeconds(currentDur.get()) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentDur.get()))
-                    );
+                     String time = getTime(currentDur.longValue()*1000);
                     currentDuration.setText(time);
                 });
                 Thread.sleep(1000);
             }
         } catch (InterruptedException ignored) {
         }
+    }
+    public String getTime(Long time){
+        return String.format("%d:%d%d",
+                TimeUnit.MILLISECONDS.toMinutes(time),
+                TimeUnit.MILLISECONDS.toSeconds(time),
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time))
+        );
     }
 
 }

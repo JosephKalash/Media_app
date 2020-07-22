@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private AudioManager mAudioManager;
     private NotificationManager notifiManager;
     static int currentFilePosition;
-    static String currentFileName;
-    static String currentFileDuration;
+    private static String currentFileName;
+    private static String currentFileDuration;
 /*
 
     private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -492,5 +492,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     public static String getCurrentFileDuration() {
         return currentFileDuration;
+    }
+
+    public static String getCurrentFileName() {
+        return currentFileName;
+    }
+    public static boolean shouldPlay(){
+        return PlaybackAudio.mShouldContinue;
     }
 }

@@ -10,20 +10,19 @@ import java.io.InputStream;
 
 public class Mp3AudioTrack  {
     Mp3Decoder.SoundData soundData;
+    public int decodedFrame=0;
     public Mp3AudioTrack(InputStream in) {
         try {
             soundData = Mp3Decoder.init(in);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(soundData == null)
-            Log.d("fuck","null");
     }
 
     public Thread decodeFullyInto(AudioTrack audioTrack) {
         Thread thread  = new Thread(() -> {
 
-            while (PlaybackAudio.mShouldContinue)
+            while (PlaybackAudio.mShouldContinue && !Thread.currentThread().isInterrupted())
             {
                 try {
                     if (!Mp3Decoder.decodeFrame(soundData)) break;
@@ -31,8 +30,10 @@ public class Mp3AudioTrack  {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(PlaybackAudio.mShouldContinue && audioTrack != null )
-                    audioTrack.write(soundData.samplesBuffer , 0 , soundData.samplesBuffer.length);
+                if(PlaybackAudio.mShouldContinue && audioTrack != null ) {
+                    audioTrack.write(soundData.samplesBuffer, 0, soundData.samplesBuffer.length);
+                    decodedFrame++;
+                }
                 else break;
 
             }

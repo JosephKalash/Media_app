@@ -59,9 +59,9 @@ public class PlaybackAudio implements MediaController{
             return;
         mShouldContinue = false;
         audioTrack.stop();
+        decoderThread.interrupt();
         decoderThread = null;
         sound = null;
-        in = null;
         audioTrack.release();
 
     }
@@ -112,7 +112,9 @@ public class PlaybackAudio implements MediaController{
     public void pause() {
         if (decoderThread == null)
             return;
+
         mShouldContinue = false;
+        decoderThread.interrupt();
         decoderThread = null;
     }
 
@@ -143,6 +145,9 @@ public class PlaybackAudio implements MediaController{
 
     @Override
     public void resume() {
-        startPlayback(this.in);
+
+        mShouldContinue = true;
+        decoderThread = sound.decodeFullyInto(audioTrack);
+
     }
 }
