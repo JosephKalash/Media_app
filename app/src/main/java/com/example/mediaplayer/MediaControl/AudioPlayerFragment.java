@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.example.mediaplayer.MainActivity;
 import com.example.mediaplayer.R;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +40,7 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.audio_control_layout, container, false);
+        View view = inflater.inflate(R.layout.audio_control_fragment, container, false);
 
         nextButton = view.findViewById(R.id.next);
         playButton = view.findViewById(R.id.play);
@@ -61,16 +60,43 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         super.onStart();
         nextButton.setOnClickListener(v -> {
             MainActivity.playNextSong(getContext());
-            timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
-        });
 
+            timeThread.interrupt();
+            timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
+            timeProgress.setProgress(0);
+
+            songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
+
+            String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
+            fullDuration.setText(time);
+            currentDuration.setText("0:00");
+            timeThread = new Thread(this);
+            timeThread.start();
+        });
+//TODO song name display two line
         playButton.setOnClickListener(v -> {
+            if(MainActivity.shouldPlay())
+                playButton.setImageResource(R.drawable.ic_play);
+            else playButton.setImageResource(R.drawable.pause);
+
             MainActivity.playSong(getContext());
         });
 
         previousButton.setOnClickListener(v -> {
             MainActivity.playPreviousSong(getContext());
+
+            timeThread.interrupt();
+
             timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
+            timeProgress.setProgress(0);
+
+            songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
+
+            String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
+            fullDuration.setText(time);
+            currentDuration.setText("0:00");
+            timeThread = new Thread(this);
+            timeThread.start();
         });
 
         shuffleButton.setOnClickListener(v -> {
@@ -81,7 +107,9 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
             Toast.makeText(getContext(),"hello motherfuck",Toast.LENGTH_SHORT).show();
         });
 
-        songName.setText(MainActivity.getCurrentFileName());
+        songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
+
+
 
        String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
         fullDuration.setText(time);
@@ -117,12 +145,14 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         } catch (InterruptedException ignored) {
         }
     }
+    @SuppressLint("DefaultLocale")
     public String getTime(Long time){
-        return String.format("%d:%d%d",
+        int second = (int) (TimeUnit.MILLISECONDS.toSeconds(time) % 60);
+
+        return String.format("%d:%s",
                 TimeUnit.MILLISECONDS.toMinutes(time),
-                TimeUnit.MILLISECONDS.toSeconds(time),
-                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time))
-        );
+                second < 10?"0" + second:second
+                );
     }
 
 }
