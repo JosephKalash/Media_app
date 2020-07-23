@@ -61,23 +61,8 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         nextButton.setOnClickListener(v -> {
             MainActivity.playNextSong(getContext());
 
-            timeThread.interrupt();
-            timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
-            timeProgress.setProgress(0);
-
-            songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
-
-            String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
-            fullDuration.setText(time);
-            currentDuration.setText("0:00");
-            timeThread = new Thread(this);
-            timeThread.start();
         });
-//TODO song name display two line
         playButton.setOnClickListener(v -> {
-            if(MainActivity.shouldPlay())
-                playButton.setImageResource(R.drawable.ic_play);
-            else playButton.setImageResource(R.drawable.pause);
 
             MainActivity.playSong(getContext());
         });
@@ -85,18 +70,6 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         previousButton.setOnClickListener(v -> {
             MainActivity.playPreviousSong(getContext());
 
-            timeThread.interrupt();
-
-            timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
-            timeProgress.setProgress(0);
-
-            songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
-
-            String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
-            fullDuration.setText(time);
-            currentDuration.setText("0:00");
-            timeThread = new Thread(this);
-            timeThread.start();
         });
 
         shuffleButton.setOnClickListener(v -> {
@@ -119,7 +92,24 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         timeThread = new Thread(this);
         timeThread.start();
     }
+    public void initNewPlayer(){
+        timeThread.interrupt();
+        timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
+        timeProgress.setProgress(0);
 
+        songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
+
+        String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
+        fullDuration.setText(time);
+        currentDuration.setText("0:00");
+        timeThread = new Thread(this);
+        timeThread.start();
+    }
+    public void changPlayButton(boolean playing){
+        if(playing)
+            playButton.setImageResource(R.drawable.ic_play);
+        else playButton.setImageResource(R.drawable.pause);
+    }
     @Override
     public void onStop() {
         super.onStop();
