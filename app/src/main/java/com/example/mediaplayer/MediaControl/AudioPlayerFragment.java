@@ -2,6 +2,7 @@ package com.example.mediaplayer.MediaControl;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
     private TextView currentDuration;
     private TextView songName;
     private Thread timeThread;
+    private AtomicInteger resumeProgress;
 
     public AudioPlayerFragment(){}
 
@@ -73,16 +75,14 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         });
 
         shuffleButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(),"hello motherfuck",Toast.LENGTH_SHORT).show();
         });
 
         repeatButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(),"hello motherfuck",Toast.LENGTH_SHORT).show();
         });
 
         songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
 
-
+        resumeProgress = new AtomicInteger();
 
        String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
         fullDuration.setText(time);
@@ -97,6 +97,8 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         timeProgress.setMax(Integer.parseInt(MainActivity.getCurrentFileDuration()));
         timeProgress.setProgress(0);
 
+        resumeProgress.set(0);
+
         songName.setText(MainActivity.getCurrentFileName().replace(".mp3",""));
 
         String time = getTime(Long.parseLong(MainActivity.getCurrentFileDuration()));
@@ -106,9 +108,12 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
         timeThread.start();
     }
     public void changPlayButton(boolean playing){
-        if(playing)
+        if(playing){
             playButton.setImageResource(R.drawable.ic_play);
-        else playButton.setImageResource(R.drawable.pause);
+        timeThread.interrupt();}
+        else {playButton.setImageResource(R.drawable.pause);
+            timeThread = new Thread(this);
+            timeThread.start();}
     }
     @Override
     public void onStop() {
@@ -120,13 +125,20 @@ public class AudioPlayerFragment extends Fragment implements Runnable{
     @Override
     public void run() {
         AtomicInteger currentDur = new AtomicInteger();
+        if(resumeProgress.get() != 0) {
+            currentDur.set(resumeProgress.get());
+            timeProgress.setProgress(currentDur.get() * 1000);
+            String time = getTime(currentDur.longValue()*1000);
+            currentDuration.setText(time);
+        }
         int fullDur = Integer.parseInt(MainActivity.getCurrentFileDuration());
 
         try {
-            while (currentDur.get() <= fullDur && !Thread.currentThread().isInterrupted() && MainActivity.shouldPlay()){
+            while (currentDur.get()*1000 <= fullDur && !Thread.currentThread().isInterrupted()){
                 getActivity().runOnUiThread(() -> {
 
                     timeProgress.setProgress(currentDur.getAndIncrement() * 1000);
+                    resumeProgress.set(currentDur.get());
                      String time = getTime(currentDur.longValue()*1000);
                     currentDuration.setText(time);
                 });
