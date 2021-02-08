@@ -1,7 +1,3 @@
-# TODO list
-
-* change project structure in order to synch audio with video correctly
-* add support for playlists (newBie11)
-* save playlist state even after shutting off the app
-* add (swipe to add) feature in the actiity which opened by the playlist
-* add (undo in 2s) button in order to deleted added playlist by mistake.
+# Get start
+For audio we Build decoder for mp3 compression formate and wav formate to decode .mp3 .wav file and play it.
+For video we build decoder for mp4 container which has mp3 formate for audio and mjpeg compression formate for video.
